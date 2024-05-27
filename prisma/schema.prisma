@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model data_variable {
+  id                                              Int                 @id @default(autoincrement())
+  name                                            String?             @db.VarChar(100)
+  data_type                                       data_variable_type?
+  mapping_id                                      Int?
+  mapping_data_variable_mapping_idTomapping       mapping?            @relation("data_variable_mapping_idTomapping", fields: [mapping_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  mapping_mapping_data_variable_idTodata_variable mapping[]           @relation("mapping_data_variable_idTodata_variable")
+}
+
+model feedback {
+  id             Int      @id @default(autoincrement())
+  text           String   @db.VarChar(100)
+  option_id      Int?
+  after_question Boolean? @default(false)
+  option         option?  @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model graph_types {
+  id                            Int                             @id @default(autoincrement())
+  name                          String                          @db.VarChar(100)
+  graph_data_types_option       graph_data_types_options?
+  number_of_variables           number_of_variables_options?
+  ordered                       String?                         @db.VarChar(30)
+  graph_types_on_question_group graph_types_on_question_group[]
+  visualization                 visualization[]
+}
+
+model graph_types_on_question_group {
+  graph_types_id    Int
+  question_group_id Int
+  graph_types       graph_types    @relation(fields: [graph_types_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question_group    question_group @relation(fields: [question_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([graph_types_id, question_group_id], map: "graph_types_question_group_pk")
+}
+
+model mapping {
+  id                                                          Int                     @id @default(autoincrement())
+  ordered                                                     String?                 @db.VarChar(30)
+  data_variable_id                                            Int?
+  visual_variable_id                                          Int?
+  variables_type                                              variables_type_options?
+  visualization_id                                            Int?
+  data_variable_data_variable_mapping_idTomapping             data_variable[]         @relation("data_variable_mapping_idTomapping")
+  data_variable_mapping_data_variable_idTodata_variable       data_variable?          @relation("mapping_data_variable_idTodata_variable", fields: [data_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  visual_variable_mapping_visual_variable_idTovisual_variable visual_variable?        @relation("mapping_visual_variable_idTovisual_variable", fields: [visual_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  visualization                                               visualization?          @relation(fields: [visualization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  visual_variable_visual_variable_mapping_idTomapping         visual_variable[]       @relation("visual_variable_mapping_idTomapping")
+}
+
+model navegation_rule {
+  id          Int       @id @default(autoincrement())
+  text        String    @db.VarChar(100)
+  rule        String    @db.VarChar(500)
+  question_id Int?
+  option_id   Int?
+  option      option?   @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question    question? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model option {
+  id              Int               @id @default(autoincrement())
+  text            String            @db.VarChar(100)
+  type            String            @db.VarChar(30)
+  question_id     Int?
+  feedback        feedback[]
+  navegation_rule navegation_rule[]
+  question        question?         @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_answer     user_answer[]
+}
+
+model question {
+  id                Int               @id @default(autoincrement())
+  text              String
+  question_group_id Int
+  is_first_question Boolean           @default(false)
+  question_vars     String?           @db.VarChar(500)
+  navegation_rule   navegation_rule[]
+  option            option[]
+  question_group    question_group    @relation(fields: [question_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_answer       user_answer[]
+}
+
+model question_group {
+  id                            Int                             @id @default(autoincrement())
+  topic                         String                          @db.VarChar(100)
+  graph_types_on_question_group graph_types_on_question_group[]
+  question                      question[]
+}
+
+model user_answer {
+  id          Int       @id @default(autoincrement())
+  option_id   Int
+  question_id Int?
+  user_id     Int
+  option      option    @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question    question? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(200)
+  user_answer user_answer[]
+}
+
+model visual_variable {
+  id                                                  Int       @id @default(autoincrement())
+  name                                                String    @db.VarChar(100)
+  mapping_id                                          Int?
+  mapping_mapping_visual_variable_idTovisual_variable mapping[] @relation("mapping_visual_variable_idTovisual_variable")
+  mapping_visual_variable_mapping_idTomapping         mapping?  @relation("visual_variable_mapping_idTomapping", fields: [mapping_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model visualization {
+  id                      Int                       @id @default(autoincrement())
+  name                    String                    @db.VarChar(100)
+  file                    String                    @db.VarChar(100)
+  graph_types_id          Int?
+  graph_data_types_option graph_data_types_options?
+  mapping                 mapping[]
+  graph_types             graph_types?              @relation(fields: [graph_types_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum aggregator_type_options {
+  count
+  frequency
+  percentage
+}
+
+enum data_variable_type {
+  numerico
+  categorio
+  temporal
+}
+
+enum graph_data_types_options {
+  numeric
+  categoric
+  numeric_and_categoric @map("numeric and categoric")
+  timeseries
+}
+
+enum number_of_variables_options {
+  single
+  multiple
+}
+
+enum variables_type_options {
+  nominal
+  ordinal
+}
