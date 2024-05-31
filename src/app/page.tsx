@@ -6,8 +6,6 @@ import { Button, Form, Input } from 'antd';
 
 type FieldType = {
   username?: string;
-  password?: string;
-  remember?: string;
 };
 
 export default function Home(props : any) {
