@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import Uploader from '@/components/uploader';
 import type { GetProp, UploadProps } from 'antd';
-import createVisualization from './actions';
+import { createVisualization } from './actions';
 import { useSearchParams } from 'next/navigation';
 
 
@@ -45,7 +45,7 @@ const normFile = (e: any) => {
   return e?.fileList;
 };
 
-const FormDisabledDemo: React.FC = () => {
+export default function UploadPage(){
 
   const [file, setFile] = useState<string>('')
   const searchParams  = useSearchParams()
@@ -89,5 +89,3 @@ const FormDisabledDemo: React.FC = () => {
     </>
   );
 };
-
-export default () => <FormDisabledDemo />;
