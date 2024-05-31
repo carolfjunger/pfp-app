@@ -17,7 +17,9 @@ export const saveNewUser = async (userName : string) => {
         name: userName
       }
     })
-    if(user) redirect('upload')
+    if(user) {
+      redirect(`upload?userId=${user.id.toString()}`)
+    }
   }catch(e){
       throw e
   }

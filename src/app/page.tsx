@@ -1,7 +1,7 @@
 'use client'
 import type { FormProps } from 'antd';
 import { Button, Form, Input } from 'antd';
-
+import { saveNewUser } from './actions';
 
 
 type FieldType = {
@@ -47,7 +47,5 @@ export default function Home(props : any) {
 }
 
 
-import prisma from '../lib/prisma'
-import { saveNewUser } from './actions';
-import { redirect } from 'next/dist/server/api-utils';
+
 

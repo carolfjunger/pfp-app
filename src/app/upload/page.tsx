@@ -21,6 +21,7 @@ import {
 import Uploader from '@/components/uploader';
 import type { GetProp, UploadProps } from 'antd';
 import createVisualization from './actions';
+import { useSearchParams } from 'next/navigation';
 
 
 
@@ -46,13 +47,18 @@ const normFile = (e: any) => {
 
 const FormDisabledDemo: React.FC = () => {
 
-  const [file, setFile] = useState<string>('')  
+  const [file, setFile] = useState<string>('')
+  const searchParams  = useSearchParams()
+  const userId = searchParams.get('userId')
 
   const onFinish: FormProps<any>['onFinish'] = async (values) => {
     console.log({ file })
-    const result = await createVisualization(values.name, file)
-    console.log({ result })
-    console.log('Success:', values);
+    if(userId){
+      const result = await createVisualization(values.name, file, Number(userId) )
+      console.log({ result })
+      console.log('Success:', values);
+    }
+    
   };
 
   const handleFile = async (file: FileType) => {
