@@ -111,6 +111,7 @@ model users {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(200)
   user_answer user_answer[]
+  visualizations visualization[]
 }
 
 model visual_variable {
@@ -124,11 +125,13 @@ model visual_variable {
 model visualization {
   id                      Int                       @id @default(autoincrement())
   name                    String                    @db.VarChar(100)
-  file                    String                    @db.VarChar(100)
+  file                    String                    
   graph_types_id          Int?
   graph_data_types_option graph_data_types_options?
   mapping                 mapping[]
   graph_types             graph_types?              @relation(fields: [graph_types_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId    Int?
+  user      users?      @relation(fields: [userId], references: [id])
 }
 
 enum aggregator_type_options {
