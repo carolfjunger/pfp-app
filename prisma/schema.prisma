@@ -59,8 +59,7 @@ model mapping {
 
 model navegation_rule {
   id          Int       @id @default(autoincrement())
-  text        String    @db.VarChar(100)
-  rule        String    @db.VarChar(500)
+  rule        String   
   question_id Int?
   option_id   Int?
   option      option?   @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

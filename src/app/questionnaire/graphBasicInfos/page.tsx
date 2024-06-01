@@ -1,7 +1,8 @@
 'use client'
 import { useEffect, useState } from "react";
-import { getQuestionToStarGraphBasicInfosQuestionnaire, saveUserAnswer } from "./actions";
+import { getNavegationRule, getQuestionToStarGraphBasicInfosQuestionnaire, saveUserAnswer } from "./actions";
 import { Button, Form, FormProps, Input, Radio } from 'antd';
+import callAction from "@/nagevationsRules/actions";
 
 const { TextArea } = Input
 
@@ -35,9 +36,21 @@ export default function GraphBasicInfosPage(){
   const { type: optionType } = option[0]
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-    const userId = localStorage.getItem('userId')
-    values.question ? await saveUserAnswer(question.id, option[0].id, Number(userId), values.question) :  null
-    console.log('Success:', values);
+    try{
+      const userId = localStorage.getItem('userId')
+      const userAnswer = values.question ? await saveUserAnswer(question.id, option[0].id, Number(userId), values.question) :  null
+      if(userAnswer){
+        const navegationRule = await getNavegationRule(question.id, option[0].id)
+        console.log(navegationRule?.rule)
+        const rule = JSON.parse(navegationRule?.rule || '')
+        if(rule?.action){
+          callAction(rule?.action, [values.question])
+        }
+      }
+      console.log('Success:', values);
+    }catch(e){
+      console.log({ e })
+    }
   };
   
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
