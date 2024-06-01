@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getNavegationRule, getQuestionToStarGraphBasicInfosQuestionnaire, saveUserAnswer } from "./actions";
 import { Button, Form, FormProps, Input, Radio } from 'antd';
 import callAction from "@/nagevationsRules/actions";
+import { useSearchParams } from "next/navigation";
 
 const { TextArea } = Input
 
@@ -13,6 +14,9 @@ type FieldType = {
 export default function GraphBasicInfosPage(){
   const [question, setQuestion] = useState<any>(null)
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(true)
+  const searchParams = useSearchParams()
+  const visualizationId = searchParams.get('visualizationId')
+  console.log({ visualizationId })
 
   useEffect(() => {
     async function fetchQuestion() {
@@ -44,7 +48,7 @@ export default function GraphBasicInfosPage(){
         console.log(navegationRule?.rule)
         const rule = JSON.parse(navegationRule?.rule || '')
         if(rule?.action){
-          callAction(rule?.action, [values.question])
+          callAction(rule?.action, [values.question, visualizationId])
         }
       }
       console.log('Success:', values);
