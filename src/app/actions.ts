@@ -12,14 +12,11 @@ export const getUsers = async () => {
 
 export const saveNewUser = async (userName : string) => {
   try{
-    const user =  await prisma.users.create({
+    return  await prisma.users.create({
       data: {
         name: userName
       }
     })
-    if(user) {
-      redirect(`upload?userId=${user.id.toString()}`)
-    }
   }catch(e){
       throw e
   }

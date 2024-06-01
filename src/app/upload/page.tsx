@@ -3,25 +3,13 @@ import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   Button,
-  Cascader,
-  Checkbox,
-  ColorPicker,
-  DatePicker,
   Form,
   FormProps,
   Input,
-  InputNumber,
-  Radio,
-  Select,
-  Slider,
-  Switch,
-  TreeSelect,
-  Upload,
 } from 'antd';
 import Uploader from '@/components/uploader';
 import type { GetProp, UploadProps } from 'antd';
 import { createVisualization } from './actions';
-import { useSearchParams } from 'next/navigation';
 
 
 
@@ -48,10 +36,9 @@ const normFile = (e: any) => {
 export default function UploadPage(){
 
   const [file, setFile] = useState<string>('')
-  const searchParams  = useSearchParams()
-  const userId = searchParams.get('userId')
-
+  
   const onFinish: FormProps<any>['onFinish'] = async (values) => {
+    const userId = localStorage.getItem('userId')
     console.log({ file })
     if(userId){
       const result = await createVisualization(values.name, file, Number(userId) )

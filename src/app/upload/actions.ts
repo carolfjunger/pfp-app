@@ -12,6 +12,7 @@ export async function createVisualization(name: string, file : string, userId : 
         userId,
       }
     })
+    console.log({ visualization })
     if(visualization){
       redirect(`questionnaire/graphBasicInfos?visualizationId=${visualization.id}`)
     }

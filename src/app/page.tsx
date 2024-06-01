@@ -11,7 +11,11 @@ type FieldType = {
 export default function Home(props : any) {
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-    values.username ? await saveNewUser(values.username) : null
+    const user = values.username ? await saveNewUser(values.username) : null
+    if(user){
+      window.localStorage.setItem('userId', user.id.toString())
+      window.location.replace('/upload');
+    }
     console.log('Success:', values);
   };
   
