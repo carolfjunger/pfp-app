@@ -102,6 +102,7 @@ model user_answer {
   option_id   Int
   question_id Int?
   user_id     Int
+  value       String
   option      option    @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   question    question? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users       users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
