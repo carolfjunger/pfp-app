@@ -4,6 +4,7 @@ import { getNavegationRule, getQuestionToStarGraphBasicInfosQuestionnaire, saveU
 import { Button, Form, FormProps, Input, Radio } from 'antd';
 import callAction from "@/nagevationsRules/actions";
 import { useSearchParams } from "next/navigation";
+import Question from "@/components/Question";
 
 const { TextArea } = Input
 
@@ -62,22 +63,12 @@ export default function GraphBasicInfosPage(){
   };
 
   return (
-  <Form
-    layout='vertical'
-    style={{ maxWidth: 600 }}
-    onFinish={onFinish}
-    onFinishFailed={onFinishFailed}
-  >
-    <Form.Item label={text} name='question'>
-      {
-        optionType === 'bigText' ? 
-          <TextArea rows={5} /> : 
-          <Input />
-      }
-    </Form.Item>
-    <Form.Item>
-      <Button type="primary" htmlType="submit">Salvar</Button>
-    </Form.Item>
-  </Form>
+    <Question 
+      isLoadingQuestion={isLoadingQuestion}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      optionType={optionType}
+      question={question}
+    />
   )
 }
