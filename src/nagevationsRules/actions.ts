@@ -1,6 +1,6 @@
 'use server'
 import prisma from "@/lib/prisma"
-import { data_variable, data_variable_type, variables_type_options } from "@prisma/client"
+import { aggregator_type_options, data_variable, data_variable_type, variables_type_options } from "@prisma/client"
 
 export default async function callAction(name : string, params : Array<any>){
   const values = params.map(str => `\`${str}\``).join(',')
@@ -30,14 +30,23 @@ function getVariableType(type : string) : variables_type_options | null{
   return null
 }
 
-async function mappingVariable(dataVariableId :  number, ordered : string, visualizationId : number, type : string) {
+function getAggregator(aggregator : string) : aggregator_type_options | null {
+  if(aggregator === "Contador") return 'count'
+  if(aggregator === "Proporção") return 'percentage'
+  if(aggregator === "Frequência") return 'frequency'
+  return null
+  
+}
+
+async function mappingVariable(dataVariableId :  number, ordered : string, visualizationId : number, type : string, aggregator : string) {
   try{
     return await prisma.mapping.create({
       data: {
         data_variable_id: dataVariableId,
         ordered: getOrdered(ordered), 
         visualization_id: visualizationId,
-        variables_type: getVariableType(type) 
+        variables_type: getVariableType(type),
+        aggregator: getAggregator(aggregator)
       }
     })
   }catch(e){
@@ -68,9 +77,9 @@ async function saveGraphData(value : string, visualizationId : number) {
     const name = dataValues[1].trim()
     const ordered = dataValues[2].trim()
     const type = dataValues[3].trim()
-    const aggregator = dataValues[4].trim() // falta botar o agregador
+    const aggregator = dataValues[4].trim()
     const dataVariable = await createDataVariable(name, genre)
-    const mapVariable = await mappingVariable(dataVariable.id, ordered, Number(visualizationId), type)
+    const mapVariable = await mappingVariable(dataVariable.id, ordered, Number(visualizationId), type, aggregator)
     console.log({ mapVariable })
   });
   console.log({ variables })

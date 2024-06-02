@@ -50,6 +50,7 @@ model mapping {
   visual_variable_id                                          Int?
   variables_type                                              variables_type_options?
   visualization_id                                            Int?
+  aggregator                                                  aggregator_type_options?
   data_variable_data_variable_mapping_idTomapping             data_variable[]         @relation("data_variable_mapping_idTomapping")
   data_variable_mapping_data_variable_idTodata_variable       data_variable?          @relation("mapping_data_variable_idTodata_variable", fields: [data_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   visual_variable_mapping_visual_variable_idTovisual_variable visual_variable?        @relation("mapping_visual_variable_idTovisual_variable", fields: [visual_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -162,3 +163,4 @@ enum variables_type_options {
   nominal
   ordinal
 }
+
