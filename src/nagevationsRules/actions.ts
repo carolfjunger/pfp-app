@@ -10,7 +10,7 @@ export default async function callAction(name : string, params : Array<any>){
 }
 
 
-async function createDataVariable(name : string, genre : string ) : Promise<data_variable> {
+async function createDataVariable(name : string, genre : string) : Promise<data_variable> {
   try{
     return await prisma.data_variable.create({
       data: {
@@ -40,7 +40,7 @@ function getAggregator(aggregator : string) : aggregator_type_options | null {
 
 async function mappingVariable(dataVariableId :  number, ordered : string, visualizationId : number, type : string, aggregator : string) {
   try{
-    return await prisma.mapping.create({
+    const mapping = await prisma.mapping.create({
       data: {
         data_variable_id: dataVariableId,
         ordered: getOrdered(ordered), 
@@ -49,6 +49,14 @@ async function mappingVariable(dataVariableId :  number, ordered : string, visua
         aggregator: getAggregator(aggregator)
       }
     })
+
+    await prisma.data_variable.update({
+      where: {
+        id: dataVariableId
+      },
+      data: { mapping_id: mapping.id }
+    })
+    return mapping
   }catch(e){
     console.log("Error on mappingVariable", e)
   }
@@ -69,7 +77,6 @@ function getOrdered(ordered : string) {
 }
 
 async function saveGraphData(value : string, visualizationId : number) {
-  const dataType = ["genre", "name", "ordered", "type", "aggregator"]
   const variables = value.split('\n')
   variables.forEach(async variable => {
     const dataValues = variable.split(',')
@@ -80,7 +87,5 @@ async function saveGraphData(value : string, visualizationId : number) {
     const aggregator = dataValues[4].trim()
     const dataVariable = await createDataVariable(name, genre)
     const mapVariable = await mappingVariable(dataVariable.id, ordered, Number(visualizationId), type, aggregator)
-    console.log({ mapVariable })
   });
-  console.log({ variables })
 }

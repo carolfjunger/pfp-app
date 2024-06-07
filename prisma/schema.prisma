@@ -11,9 +11,8 @@ model data_variable {
   id                                              Int                 @id @default(autoincrement())
   name                                            String?             @db.VarChar(100)
   data_type                                       data_variable_type?
-  mapping_id                                      Int?
-  mapping_data_variable_mapping_idTomapping       mapping?            @relation("data_variable_mapping_idTomapping", fields: [mapping_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  mapping_mapping_data_variable_idTodata_variable mapping[]           @relation("mapping_data_variable_idTodata_variable")
+  mapping_id                                      Int?         @unique
+  mapping                                         mapping?    
 }
 
 model feedback {
@@ -46,13 +45,12 @@ model graph_types_on_question_group {
 model mapping {
   id                                                          Int                     @id @default(autoincrement())
   ordered                                                     String?                 @db.VarChar(30)
-  data_variable_id                                            Int?
   visual_variable_id                                          Int?
   variables_type                                              variables_type_options?
-  visualization_id                                            Int?
+  visualization_id                                            Int?  
   aggregator                                                  aggregator_type_options?
-  data_variable_data_variable_mapping_idTomapping             data_variable[]         @relation("data_variable_mapping_idTomapping")
-  data_variable_mapping_data_variable_idTodata_variable       data_variable?          @relation("mapping_data_variable_idTodata_variable", fields: [data_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  data_variable_id                                            Int?                    @unique
+  data_variable                                               data_variable?          @relation(fields: [data_variable_id], references: [id])
   visual_variable_mapping_visual_variable_idTovisual_variable visual_variable?        @relation("mapping_visual_variable_idTovisual_variable", fields: [visual_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   visualization                                               visualization?          @relation(fields: [visualization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   visual_variable_visual_variable_mapping_idTomapping         visual_variable[]       @relation("visual_variable_mapping_idTomapping")

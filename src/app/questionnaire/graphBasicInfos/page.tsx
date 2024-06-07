@@ -29,16 +29,9 @@ export default function GraphBasicInfosPage(){
   }, [])
 
 
-  if(isLoadingQuestion){
-    return <div>Carregando...</div>
-  }
-
-  if(!question) {
-    return <div>Error: Não existe esse id não existe!</div>
-  }
-
-  const { text, option } = question
-  const { type: optionType } = option[0]
+  const text = question?.text
+  const option = question?.option
+  const optionType = question?.option[0]?.type
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try{
