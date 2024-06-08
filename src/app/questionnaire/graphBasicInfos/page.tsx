@@ -1,24 +1,21 @@
 'use client'
 import { useEffect, useState } from "react";
-import { getNavegationRule, getQuestionToStarGraphBasicInfosQuestionnaire, saveUserAnswer } from "./actions";
-import { Button, Form, FormProps, Input, Radio } from 'antd';
-import callAction from "@/nagevationsRules/actions";
+import { getQuestionToStarGraphBasicInfosQuestionnaire } from "./actions";
 import { useSearchParams } from "next/navigation";
-import Question from "@/components/Question";
+import QuestionInput from "@/components/QuestionInput";
+import { useRouter } from "next/router";
 
-const { TextArea } = Input
-
-type FieldType = {
-  question?: string;
-};
 
 export default function GraphBasicInfosPage(){
   const [question, setQuestion] = useState<any>(null)
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(true)
+
   const searchParams = useSearchParams()
   const visualizationId = searchParams.get('visualizationId')
-  console.log({ visualizationId })
 
+  // const router = useRouter()
+  // console.log({ router })
+  
   useEffect(() => {
     async function fetchQuestion() {
       const firstQuestion  = await getQuestionToStarGraphBasicInfosQuestionnaire()
@@ -33,35 +30,13 @@ export default function GraphBasicInfosPage(){
   const option = question?.option
   const optionType = question?.option[0]?.type
 
-  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-    try{
-      const userId = localStorage.getItem('userId')
-      const userAnswer = values.question ? await saveUserAnswer(question.id, option[0].id, Number(userId), values.question) :  null
-      if(userAnswer){
-        const navegationRule = await getNavegationRule(question.id, option[0].id)
-        console.log(navegationRule?.rule)
-        const rule = JSON.parse(navegationRule?.rule || '')
-        if(rule?.action){
-          callAction(rule?.action, [values.question, visualizationId])
-        }
-      }
-      console.log('Success:', values);
-    }catch(e){
-      console.log({ e })
-    }
-  };
-  
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-
   return (
-    <Question 
+    <QuestionInput
       isLoadingQuestion={isLoadingQuestion}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
       optionType={optionType}
       question={question}
+      visualizationId={Number(visualizationId)}
+      optionId={option?.length ? option[0].id : -1}
     />
   )
 }
