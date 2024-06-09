@@ -2,17 +2,24 @@
 
 import prisma from "@/lib/prisma";
 
-export async function getQuestionToStartTitleQuestionnaire(){
+export async function getQuestionToStartTitleQuestionnaire(questionId : number){
   try{
+    const where = questionId ? {
+      id: {
+        equals: questionId
+      }
+    } : {
+      is_first_question: {
+        equals: true
+      }
+    }
     const title = await prisma.question_group.findFirst({
       where: {
         topic: 'title'
       },
       include: {
         question: {
-          where: {
-            is_first_question: true
-          },
+          where,
           include: {
             option: {
               include: {

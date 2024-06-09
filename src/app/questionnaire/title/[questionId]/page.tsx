@@ -6,7 +6,7 @@ import { getQuestionToStartTitleQuestionnaire } from "./actions";
 import QuestionSelect from "@/components/QuestionSelect";
 
 
-export default function TitlePage(){
+export default function TitlePage({ params }: { params: { questionId: string } }){
   const [question, setQuestion] = useState<any>(null)
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(true)
   const searchParams = useSearchParams()
@@ -14,7 +14,7 @@ export default function TitlePage(){
 
   useEffect(() => {
     async function fetchQuestion() {
-      const firstQuestion  = await getQuestionToStartTitleQuestionnaire()
+      const firstQuestion  =  await getQuestionToStartTitleQuestionnaire(Number(params?.questionId))
       setQuestion(firstQuestion)
       setIsLoadingQuestion(false)
     } 

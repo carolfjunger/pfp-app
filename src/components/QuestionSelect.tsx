@@ -59,7 +59,7 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
         if(feedback?.length && feedback[0]?.after_question){
           setShowFeedback(feedback[0].text)
         } else {
-          handleNavegationRule()
+          handleNavegationRule(optionId)
         }
       }
       console.log('Success:', values);
@@ -77,24 +77,24 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
   }
 
   const handleOk = () => {
-    handleNavegationRule()
+    handleNavegationRule(undefined)
     setShowFeedback("")
   }
 
-  const handleNavegationRule = async () => {
-    const navegationRule = await getNavegationRule(question.id, -1)
-    console.log({ navegationRule })
+  const handleNavegationRule = async (optionId : number | undefined) => {
+    const navegationRule = optionId ? await getNavegationRule(question.id, optionId) : null
+    console.log(!navegationRule)
     if(!navegationRule) {
-      router.replace('feedback')
-    }
+      router.push('/feedback')
+      return
+    } 
     const rule = JSON.parse(navegationRule?.rule || '')
     if(rule?.action){
       console.log('action', rule?.action)
       // callAction(rule?.action, [values.question, visualizationId])
     } if (rule?.handleNext) {
       console.log('handleNext', rule?.handleNext)
-
-      // handleNext(rule?.handleNext, visualizationId)
+      handleNext(rule?.handleNext, visualizationId)
     }
   }
 
@@ -118,7 +118,6 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
             </Space>
           </Radio.Group>
         </Form.Item>
-        
         <Form.Item>
           <Button type="primary" htmlType="submit">Salvar</Button>
         </Form.Item>
