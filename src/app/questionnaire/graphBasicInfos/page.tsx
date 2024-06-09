@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { getQuestionToStarGraphBasicInfosQuestionnaire } from "./actions";
 import { useSearchParams } from "next/navigation";
 import QuestionInput from "@/components/QuestionInput";
-import { useRouter } from "next/router";
 
 
 export default function GraphBasicInfosPage(){
@@ -13,9 +12,6 @@ export default function GraphBasicInfosPage(){
   const searchParams = useSearchParams()
   const visualizationId = searchParams.get('visualizationId')
 
-  // const router = useRouter()
-  // console.log({ router })
-  
   useEffect(() => {
     async function fetchQuestion() {
       const firstQuestion  = await getQuestionToStarGraphBasicInfosQuestionnaire()

@@ -5,7 +5,6 @@ import callAction from '@/nagevationsRules/actions';
 import { getNavegationRule, saveUserAnswer } from './actions';
 import { NextRouter } from 'next/router';
 import handleNext from '@/nagevationsRules/handleNext';
-import { useRouter } from 'next/navigation';
 
 const { TextArea } = Input
 
@@ -19,14 +18,10 @@ type QuestionProps = {
   optionType: string,
   visualizationId?: number | null,
   optionId: number,
-  router?: NextRouter,
 }
 
 export default  function QuestionInput({ isLoadingQuestion, question, optionType, visualizationId, optionId } : QuestionProps){
   
-  const router = useRouter()
-  console.log({ router })
-
   if(isLoadingQuestion){
     return <div>Carregando...</div>
   }
@@ -45,17 +40,16 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
       const userAnswer = values.question ? await saveUserAnswer(question.id, optionId, Number(userId), values.question) :  null
       if(userAnswer){
         const navegationRule = await getNavegationRule(question.id, optionId)
-        console.log(navegationRule?.rule)
         const rule = JSON.parse(navegationRule?.rule || '')
         if(rule?.action){
           callAction(rule?.action, [values.question, visualizationId])
         } if (rule?.handleNext) {
-          handleNext(rule?.handleNext, undefined)
+          handleNext(rule?.handleNext, visualizationId)
         }
       }
       console.log('Success:', values);
     }catch(e){
-      console.log({ e })
+      console.log("Error on onFinish", e)
     }
   };
   
