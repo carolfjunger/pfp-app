@@ -4,8 +4,6 @@ import { aggregator_type_options, data_variable, data_variable_type, variables_t
 
 export default async function callAction(name : string, params : Array<any>){
   const values = params.map(str => `\`${str}\``).join(',')
-  console.log({ values })
-  console.log(`${name}(${values})`)
   eval(`${name}(${values})`)
 }
 
@@ -92,7 +90,6 @@ async function createVisualVaribale(name : string, type : visual_variable_type, 
     }
   })
 
-  console.log({ mapping })
 
   return await prisma.visual_variable.update({
     where: {

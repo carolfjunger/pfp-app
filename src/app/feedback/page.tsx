@@ -56,7 +56,6 @@ export default function FeedbackPage(){
   useEffect(() => {
     async function fetchData() {
       const visualization = await getVisualization(7)
-      console.log({ visualization })
       setVisualization(visualization)
       setIsLoading(false)
     }

@@ -15,7 +15,6 @@ const props: UploadProps = {
   multiple: false,
 //   action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
   onChange(info) {
-    console.log({ info })
     const { status } = info.file;
     if (status !== 'uploading') {
       console.log(info.file, info.fileList);

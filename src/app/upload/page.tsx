@@ -39,10 +39,8 @@ export default function UploadPage(){
   
   const onFinish: FormProps<any>['onFinish'] = async (values) => {
     const userId = localStorage.getItem('userId')
-    console.log({ file })
     if(userId){
       const result = await createVisualization(values.name, file, Number(userId) )
-      console.log({ result })
       console.log('Success:', values);
     }
     

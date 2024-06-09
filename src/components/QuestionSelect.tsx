@@ -88,10 +88,8 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
     } 
     const rule = JSON.parse(navegationRule?.rule || '')
     if(rule?.action){
-      console.log('action', rule?.action)
       callAction(rule?.action, [optionId, visualizationId])
     } if (rule?.handleNext) {
-      console.log('handleNext', rule?.handleNext)
       handleNext(rule?.handleNext, visualizationId)
     }
   }
