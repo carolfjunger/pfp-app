@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import QuestionInput from "@/components/QuestionInput";
 import { getQuestionToStartTitleQuestionnaire } from "./actions";
+import QuestionSelect from "@/components/QuestionSelect";
 
 
 export default function TitlePage(){
@@ -25,6 +26,16 @@ export default function TitlePage(){
   const option = question?.option
   const optionType = question?.option[0]?.type
 
+  if(optionType?.includes('select')) {
+    return (
+      <QuestionSelect
+        isLoadingQuestion={isLoadingQuestion}
+        question={question}
+        visualizationId={Number(visualizationId)}
+        options={option}
+      />
+    )
+  }
   
   return (
     <QuestionInput

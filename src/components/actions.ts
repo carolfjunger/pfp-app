@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
-export async function saveUserAnswer(questionId : number, optionId : number, userId: number, value : string){
+export async function saveUserAnswer(questionId : number, optionId : number, userId: number, value : string ){
   return await prisma.user_answer.create({
     data: {
       question_id: questionId,

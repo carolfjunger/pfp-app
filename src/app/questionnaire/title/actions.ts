@@ -14,7 +14,11 @@ export async function getQuestionToStartTitleQuestionnaire(){
             is_first_question: true
           },
           include: {
-            option: true
+            option: {
+              include: {
+                feedback: true
+              }
+            }
           }
         }
       }
