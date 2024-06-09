@@ -40,6 +40,7 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
       const userAnswer = values.question ? await saveUserAnswer(question.id, optionId, Number(userId), values.question) :  null
       if(userAnswer){
         const navegationRule = await getNavegationRule(question.id, optionId)
+        console.log({ navegationRule })
         const rule = JSON.parse(navegationRule?.rule || '')
         if(rule?.action){
           callAction(rule?.action, [values.question, visualizationId])

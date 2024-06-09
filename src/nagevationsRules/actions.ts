@@ -1,6 +1,6 @@
 'use server'
 import prisma from "@/lib/prisma"
-import { aggregator_type_options, data_variable, data_variable_type, variables_type_options } from "@prisma/client"
+import { aggregator_type_options, data_variable, data_variable_type, variables_type_options, visual_variable_type } from "@prisma/client"
 
 export default async function callAction(name : string, params : Array<any>){
   const values = params.map(str => `\`${str}\``).join(',')
@@ -76,6 +76,76 @@ function getOrdered(ordered : string) {
   return null
 }
 
+async function createVisualVaribale(name : string, type : visual_variable_type, visualization_id : number) {
+
+  const visualVariable = await prisma.visual_variable.create({
+    data: {
+      name,
+      type,
+    }
+  })
+
+  const mapping = await prisma.mapping.create({
+    data: {
+      visualization_id,
+      visual_variable_id: visualVariable.id
+    }
+  })
+
+  console.log({ mapping })
+
+  return await prisma.visual_variable.update({
+    where: {
+      id: visualVariable.id
+    },
+    data: {
+      mapping_id: mapping.id
+    }
+  })
+}
+
+
+async function getPositionByOptionId(optionId : number) {
+  const option = await prisma.option.findUnique({
+    where: {
+      id: optionId
+    },
+    select: {
+      id: true,
+      text: true
+    }
+  })
+  return option?.text
+  
+}
+
+async function getMappingTitleByVisualizationId(visualizationId : number) {
+  return await prisma.mapping.findFirst({
+    where: {
+      visualization_id: Number(visualizationId),
+      visual_variable: {
+        type: 'title'
+      }
+    },
+    include: {
+      visual_variable: true
+    }
+  })
+  
+}
+
+async function updateVisualVariablePosition(visualVariableId : number, position : string) {
+  return await prisma.visual_variable.update({
+    where: {
+      id: visualVariableId
+    },
+    data: {
+      position,
+    }
+  }) 
+  
+}
+
 async function saveGraphData(value : string, visualizationId : number) {
   const variables = value.split('\n')
   variables.forEach(async variable => {
@@ -88,4 +158,17 @@ async function saveGraphData(value : string, visualizationId : number) {
     const dataVariable = await createDataVariable(name, genre)
     const mapVariable = await mappingVariable(dataVariable.id, ordered, Number(visualizationId), type, aggregator)
   });
+}
+
+async function saveTitle(title : string, visualizationId : number) {
+  const trimedTitle = title.trim()
+  await createVisualVaribale(trimedTitle, 'title', Number(visualizationId))
+}
+
+async function saveTitlePosition(optionId : string, visualizationId : string) {
+  const mapping = await getMappingTitleByVisualizationId(Number(visualizationId))
+  const position = await getPositionByOptionId(Number(optionId))
+  if(mapping?.visual_variable?.id && position){
+    await updateVisualVariablePosition(mapping?.visual_variable?.id, position)
+  }
 }

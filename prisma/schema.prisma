@@ -8,11 +8,11 @@ datasource db {
 }
 
 model data_variable {
-  id                                              Int                 @id @default(autoincrement())
-  name                                            String?             @db.VarChar(100)
-  data_type                                       data_variable_type?
-  mapping_id                                      Int?         @unique
-  mapping                                         mapping?    
+  id         Int                 @id @default(autoincrement())
+  name       String?             @db.VarChar(100)
+  data_type  data_variable_type?
+  mapping_id Int?                @unique
+  mapping    mapping?
 }
 
 model feedback {
@@ -43,22 +43,21 @@ model graph_types_on_question_group {
 }
 
 model mapping {
-  id                                                          Int                     @id @default(autoincrement())
-  ordered                                                     String?                 @db.VarChar(30)
-  visual_variable_id                                          Int?
-  variables_type                                              variables_type_options?
-  visualization_id                                            Int?  
-  aggregator                                                  aggregator_type_options?
-  data_variable_id                                            Int?                    @unique
-  data_variable                                               data_variable?          @relation(fields: [data_variable_id], references: [id])
-  visual_variable_mapping_visual_variable_idTovisual_variable visual_variable?        @relation("mapping_visual_variable_idTovisual_variable", fields: [visual_variable_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  visualization                                               visualization?          @relation(fields: [visualization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  visual_variable_visual_variable_mapping_idTomapping         visual_variable[]       @relation("visual_variable_mapping_idTomapping")
+  id                 Int                      @id @default(autoincrement())
+  ordered            String?                  @db.VarChar(30)
+  variables_type     variables_type_options?
+  visualization_id   Int?
+  aggregator         aggregator_type_options?
+  data_variable_id   Int?                     @unique
+  data_variable      data_variable?           @relation(fields: [data_variable_id], references: [id])
+  visual_variable_id Int?                     @unique
+  visual_variable    visual_variable?         @relation(fields: [visual_variable_id], references: [id])
+  visualization      visualization?           @relation(fields: [visualization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model navegation_rule {
   id          Int       @id @default(autoincrement())
-  rule        String   
+  rule        String
   question_id Int?
   option_id   Int?
   option      option?   @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -107,30 +106,31 @@ model user_answer {
 }
 
 model users {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(200)
-  user_answer user_answer[]
+  id             Int             @id @default(autoincrement())
+  name           String          @db.VarChar(200)
+  user_answer    user_answer[]
   visualizations visualization[]
 }
 
 model visual_variable {
-  id                                                  Int       @id @default(autoincrement())
-  name                                                String    @db.VarChar(100)
-  mapping_id                                          Int?
-  mapping_mapping_visual_variable_idTovisual_variable mapping[] @relation("mapping_visual_variable_idTovisual_variable")
-  mapping_visual_variable_mapping_idTomapping         mapping?  @relation("visual_variable_mapping_idTomapping", fields: [mapping_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         Int                   @id @default(autoincrement())
+  name       String                @db.VarChar(100)
+  type       visual_variable_type?
+  position   String?               @db.VarChar(100)
+  mapping_id Int?
+  mapping mapping?
 }
 
 model visualization {
   id                      Int                       @id @default(autoincrement())
   name                    String                    @db.VarChar(100)
-  file                    String                    
+  file                    String
   graph_types_id          Int?
   graph_data_types_option graph_data_types_options?
   mapping                 mapping[]
   graph_types             graph_types?              @relation(fields: [graph_types_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userId    Int?
-  user      users?      @relation(fields: [userId], references: [id])
+  userId                  Int?
+  user                    users?                    @relation(fields: [userId], references: [id])
 }
 
 enum aggregator_type_options {
@@ -162,3 +162,6 @@ enum variables_type_options {
   ordinal
 }
 
+enum visual_variable_type {
+  title
+}

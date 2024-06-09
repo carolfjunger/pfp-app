@@ -52,7 +52,6 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
       const userId = localStorage.getItem('userId')
       const { optionId } = values
       const userAnswer = optionId ? await saveUserAnswer(question.id, optionId, Number(userId), "") :  null
-      
       if(userAnswer){
         const selectedOption = find(options, (option) => option.id === optionId )
         const feedback = selectedOption?.feedback
@@ -83,7 +82,6 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
 
   const handleNavegationRule = async (optionId : number | undefined) => {
     const navegationRule = optionId ? await getNavegationRule(question.id, optionId) : null
-    console.log(!navegationRule)
     if(!navegationRule) {
       router.push('/feedback')
       return
@@ -91,7 +89,7 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
     const rule = JSON.parse(navegationRule?.rule || '')
     if(rule?.action){
       console.log('action', rule?.action)
-      // callAction(rule?.action, [values.question, visualizationId])
+      callAction(rule?.action, [optionId, visualizationId])
     } if (rule?.handleNext) {
       console.log('handleNext', rule?.handleNext)
       handleNext(rule?.handleNext, visualizationId)
