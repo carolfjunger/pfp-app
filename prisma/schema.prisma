@@ -160,6 +160,8 @@ enum number_of_variables_options {
 enum variables_type_options {
   nominal
   ordinal
+  generic
+  informative
 }
 
 enum visual_variable_type {

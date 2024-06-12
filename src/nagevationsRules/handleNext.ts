@@ -24,6 +24,7 @@ export default async function handleNext(nextRoute : any,  visualizationId : num
       const startQuestion = find(questionGroup.question, (question) => question.is_first_question)
       redirect(`${questionGroup.topic}/${startQuestion?.id}?visualizationId=${visualizationId}`)
     }
-    
+  } else {
+    redirect('feedback')
   }
 }

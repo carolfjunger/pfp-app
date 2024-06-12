@@ -25,6 +25,8 @@ async function createDataVariable(name : string, genre : string) : Promise<data_
 function getVariableType(type : string) : variables_type_options | null{
   if(type === 'Nominal') return 'nominal'
   if(type === 'Ordinal') return 'ordinal'
+  if(type === 'Informativo') return 'informative'
+  if(type === 'Genérico') return 'generic'
   return null
 }
 
@@ -102,7 +104,7 @@ async function createVisualVaribale(name : string, type : visual_variable_type, 
 }
 
 
-async function getPositionByOptionId(optionId : number) {
+async function getTextByOptionId(optionId : number) {
   const option = await prisma.option.findUnique({
     where: {
       id: optionId
@@ -143,6 +145,18 @@ async function updateVisualVariablePosition(visualVariableId : number, position 
   
 }
 
+async function updateMappingVariableType(mappingId :number, variableType : string) {
+  return await prisma.mapping.update({
+    where: {
+      id: mappingId
+    },
+    data: {
+      variables_type: getVariableType(variableType)
+    }
+  })  
+}
+
+
 async function saveGraphData(value : string, visualizationId : number) {
   const variables = value.split('\n')
   variables.forEach(async variable => {
@@ -164,8 +178,16 @@ async function saveTitle(title : string, visualizationId : number) {
 
 async function saveTitlePosition(optionId : string, visualizationId : string) {
   const mapping = await getMappingTitleByVisualizationId(Number(visualizationId))
-  const position = await getPositionByOptionId(Number(optionId))
+  const position = await getTextByOptionId(Number(optionId))
   if(mapping?.visual_variable?.id && position){
     await updateVisualVariablePosition(mapping?.visual_variable?.id, position)
+  }
+}
+
+async function saveTitleVariableType(optionId : string, visualizationId : string) {
+  const mapping = await getMappingTitleByVisualizationId(Number(visualizationId))
+  const variableType = await getTextByOptionId(Number(optionId))
+  if(mapping?.id && variableType){
+    await updateMappingVariableType(mapping?.id, variableType)
   }
 }
