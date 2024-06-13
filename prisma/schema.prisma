@@ -16,11 +16,13 @@ model data_variable {
 }
 
 model feedback {
-  id             Int      @id @default(autoincrement())
-  text           String   @db.VarChar(100)
+  id             Int       @id @default(autoincrement())
+  text           String    @db.VarChar(100)
   option_id      Int?
-  after_question Boolean? @default(false)
-  option         option?  @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  question_id    Int?
+  after_question Boolean?  @default(false)
+  option         option?   @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  question       question? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
 }
 
 model graph_types {
@@ -85,6 +87,7 @@ model question {
   option            option[]
   question_group    question_group    @relation(fields: [question_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_answer       user_answer[]
+  feedback          feedback[]
 }
 
 model question_group {
@@ -118,7 +121,7 @@ model visual_variable {
   type       visual_variable_type?
   position   String?               @db.VarChar(100)
   mapping_id Int?
-  mapping mapping?
+  mapping    mapping?
 }
 
 model visualization {
