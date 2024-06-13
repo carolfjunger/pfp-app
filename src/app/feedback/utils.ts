@@ -1,7 +1,7 @@
 export function translateDataType(dataType : string){
-  if(dataType === "categorio") return "Categórico"
-  if(dataType === "numerico") return "Numérico"
-  if(dataType === "temporal") return "Temporal"
+  if(dataType === "categoric") return "Categórico"
+  if(dataType === "numeric") return "Numérico"
+  if(dataType === "timeseries") return "Temporal"
   return "N/A"
 }
 

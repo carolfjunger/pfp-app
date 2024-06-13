@@ -63,9 +63,9 @@ async function mappingVariable(dataVariableId :  number, ordered : string, visua
 }
 
 function getDataType (genre : string) : data_variable_type | null {
-  if(genre === 'Categórica') return 'categorio'
-  if(genre === 'Numérico') return 'numerico'
-  if(genre === 'Temporal') return 'temporal'
+  if(genre === 'Categórica') return 'categoric'
+  if(genre === 'Numérico') return 'numeric'
+  if(genre === 'Temporal') return 'timeseries'
   return null
 }
 

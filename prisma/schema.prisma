@@ -143,9 +143,9 @@ enum aggregator_type_options {
 }
 
 enum data_variable_type {
-  numerico
-  categorio
-  temporal
+  numeric
+  categoric
+  timeseries
 }
 
 enum graph_data_types_options {
