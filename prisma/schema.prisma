@@ -16,13 +16,14 @@ model data_variable {
 }
 
 model feedback {
-  id             Int       @id @default(autoincrement())
-  text           String    @db.VarChar(100)
+  id             Int         @id @default(autoincrement())
+  text           String      @db.VarChar(100)
   option_id      Int?
   question_id    Int?
-  after_question Boolean?  @default(false)
-  option         option?   @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  question       question? @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  after_question Boolean?    @default(false)
+  option         option?     @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  question       question?   @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  references     references[]
 }
 
 model graph_types {
@@ -134,6 +135,16 @@ model visualization {
   graph_types             graph_types?              @relation(fields: [graph_types_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userId                  Int?
   user                    users?                    @relation(fields: [userId], references: [id])
+}
+
+model references {
+  id       Int        @id @default(autoincrement())
+  author   String
+  title    String
+  DOI      String
+  url      String
+  citation String
+  feedback feedback[]
 }
 
 enum aggregator_type_options {
