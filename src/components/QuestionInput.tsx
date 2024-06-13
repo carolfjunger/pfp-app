@@ -2,7 +2,7 @@
 import { Button, Form, FormProps, Input, Radio } from 'antd';
 import { question } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
-import { getNavegationRule, saveUserAnswer } from './actions';
+import { getnavigationRule, saveUserAnswer } from './actions';
 import { NextRouter } from 'next/router';
 import handleNext from '@/nagevationsRules/handleNext';
 
@@ -39,8 +39,9 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
       const userId = localStorage.getItem('userId')
       const userAnswer = values.question ? await saveUserAnswer(question.id, optionId, Number(userId), values.question) :  null
       if(userAnswer){
-        const navegationRule = await getNavegationRule(question.id, optionId)
-        const rule = JSON.parse(navegationRule?.rule || '')
+        const navigationRule = await getnavigationRule(question.id, optionId)
+        console.log({ navigationRule })
+        const rule = JSON.parse(navigationRule?.rule || '')
         if(rule?.action){
           callAction(rule?.action, [values.question, visualizationId])
         } if (rule?.handleNext) {

@@ -57,7 +57,7 @@ model mapping {
   visualization      visualization?           @relation(fields: [visualization_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model navegation_rule {
+model navigation_rule {
   id          Int       @id @default(autoincrement())
   rule        String
   question_id Int?
@@ -72,7 +72,7 @@ model option {
   type            String            @db.VarChar(30)
   question_id     Int?
   feedback        feedback[]
-  navegation_rule navegation_rule[]
+  navigation_rule navigation_rule[]
   question        question?         @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_answer     user_answer[]
 }
@@ -83,7 +83,7 @@ model question {
   question_group_id Int
   is_first_question Boolean           @default(false)
   question_vars     String?           @db.VarChar(500)
-  navegation_rule   navegation_rule[]
+  navigation_rule   navigation_rule[]
   option            option[]
   question_group    question_group    @relation(fields: [question_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user_answer       user_answer[]

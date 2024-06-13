@@ -2,7 +2,7 @@
 import { Button, Form, FormProps, Input, Radio, Space } from 'antd';
 import { feedback, question } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
-import { getNavegationRule, saveUserAnswer } from './actions';
+import { getnavigationRule, saveUserAnswer } from './actions';
 import { find } from 'lodash'
 import handleNext from '@/nagevationsRules/handleNext';
 import { useState } from 'react';
@@ -58,7 +58,7 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
         if(feedback?.length && feedback[0]?.after_question){
           setShowFeedback(feedback[0].text)
         } else {
-          handleNavegationRule(optionId)
+          handlenavigationRule(optionId)
         }
       }
       console.log('Success:', values);
@@ -76,22 +76,22 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
   }
 
   const handleOk = () => {
-    handleNavegationRule(undefined)
+    handlenavigationRule(undefined)
     setShowFeedback("")
   }
 
-  const handleNavegationRule = async (optionId : number | undefined) => {
-    const navegationRule = optionId ? await getNavegationRule(question.id, optionId) : null
-    if(!navegationRule) {
+  const handlenavigationRule = async (optionId : number | undefined) => {
+    const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
+    console.log({ navigationRule })
+    if(!navigationRule) {
       router.push('/feedback')
       return
     } 
-    const rule = JSON.parse(navegationRule?.rule || '')
+    const rule = JSON.parse(navigationRule?.rule || '')
     if(rule?.action){
       callAction(rule?.action, [optionId, visualizationId])
-    } if (rule?.handleNext) {
-      handleNext(rule?.handleNext, visualizationId)
-    }
+    } 
+    handleNext(rule?.handleNext, visualizationId)
   }
 
 

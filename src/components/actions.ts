@@ -13,12 +13,12 @@ export async function saveUserAnswer(questionId : number, optionId : number, use
   })
 }
 
-export async function getNavegationRule(questionId : number, optionId : number) {
-  const navegationRule = await prisma.navegation_rule.findFirst({
+export async function getnavigationRule(questionId : number, optionId : number) {
+  const navigationRule = await prisma.navigation_rule.findFirst({
     where: {
       question_id: questionId,
       option_id: optionId
     }
   })
-  return navegationRule
+  return navigationRule
 }

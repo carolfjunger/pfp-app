@@ -25,6 +25,6 @@ export default async function handleNext(nextRoute : any,  visualizationId : num
       redirect(`${questionGroup.topic}/${startQuestion?.id}?visualizationId=${visualizationId}`)
     }
   } else {
-    redirect('feedback')
+    redirect('/feedback')
   }
 }
