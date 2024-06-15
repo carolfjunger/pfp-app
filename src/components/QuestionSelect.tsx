@@ -3,7 +3,7 @@ import { Button, Form, FormProps, Input, Radio, Space } from 'antd';
 import { feedback, question } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
 import { getnavigationRule, saveUserAnswer } from './actions';
-import { find } from 'lodash'
+import { find, sortBy } from 'lodash'
 import handleNext from '@/nagevationsRules/handleNext';
 import { useState } from 'react';
 import FeedbackModal from './FeedbackModal';
@@ -94,6 +94,14 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
     handleNext(rule?.handleNext, visualizationId)
   }
 
+  const orderedOptions = sortBy(options, (item) => {
+    if (item.text === "N/A") {
+      return 'zzzz';
+    } if (item.text === "Sim"){
+      return 'a'
+    }
+    return item.text.toLowerCase(); 
+  })
 
   return (
     <>
@@ -107,7 +115,7 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
           <Radio.Group>
             <Space direction="vertical">
               {
-                options.map((option) => (
+                orderedOptions.map((option) => (
                   <Radio key={option.id} value={option.id}>{option.text}</Radio>
                 ))
               }
