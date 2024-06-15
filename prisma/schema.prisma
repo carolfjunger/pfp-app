@@ -16,33 +16,24 @@ model data_variable {
 }
 
 model feedback {
-  id             Int         @id @default(autoincrement())
-  text           String      @db.VarChar(100)
+  id             Int          @id @default(autoincrement())
+  text           String       @db.VarChar(100)
   option_id      Int?
   question_id    Int?
-  after_question Boolean?    @default(false)
-  option         option?     @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  question       question?   @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  after_question Boolean?     @default(false)
+  option         option?      @relation(fields: [option_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  question       question?    @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: Cascade)
   references     references[]
 }
 
 model graph_types {
-  id                            Int                             @id @default(autoincrement())
-  name                          String                          @db.VarChar(100)
-  graph_data_types_option       graph_data_types_options?
-  number_of_variables           number_of_variables_options?
-  ordered                       String?                         @db.VarChar(30)
-  graph_types_on_question_group graph_types_on_question_group[]
-  visualization                 visualization[]
-}
-
-model graph_types_on_question_group {
-  graph_types_id    Int
-  question_group_id Int
-  graph_types       graph_types    @relation(fields: [graph_types_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  question_group    question_group @relation(fields: [question_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([graph_types_id, question_group_id], map: "graph_types_question_group_pk")
+  id                      Int                          @id @default(autoincrement())
+  name                    String                       @db.VarChar(100)
+  graph_data_types_option graph_data_types_options?
+  number_of_variables     number_of_variables_options?
+  ordered                 String?                      @db.VarChar(30)
+  question_group          question_group[]
+  visualization           visualization[]
 }
 
 model mapping {
@@ -92,10 +83,10 @@ model question {
 }
 
 model question_group {
-  id                            Int                             @id @default(autoincrement())
-  topic                         String                          @db.VarChar(100)
-  graph_types_on_question_group graph_types_on_question_group[]
-  question                      question[]
+  id          Int           @id @default(autoincrement())
+  topic       String        @db.VarChar(100)
+  question    question[]
+  graph_types graph_types[]
 }
 
 model user_answer {
