@@ -1,5 +1,6 @@
 'use server'
 import prisma from "@/lib/prisma"
+import { getGraphTypeByName, getOptionById } from "@/requests/get"
 import { aggregator_type_options, data_variable, data_variable_type, variables_type_options, visual_variable_type } from "@prisma/client"
 
 export default async function callAction(name : string, params : Array<any>){
@@ -189,5 +190,20 @@ async function saveTitleVariableType(optionId : string, visualizationId : string
   const variableType = await getTextByOptionId(Number(optionId))
   if(mapping?.id && variableType){
     await updateMappingVariableType(mapping?.id, variableType)
+  }
+}
+
+async function handleSaveGraphType(optionId : string, visualizationId : string) {
+  const option = await getOptionById(Number(optionId))
+  if(option){
+    const graphType = await getGraphTypeByName(option?.text)
+    await prisma.visualization.update({
+      where: {
+        id: Number(visualizationId)
+      },
+      data: {
+        graph_types_id: graphType?.id
+      }
+    })
   }
 }
