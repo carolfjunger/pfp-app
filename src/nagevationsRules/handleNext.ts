@@ -7,6 +7,7 @@ import { NextRouter } from 'next/router'
 
 
 export default async function handleNext(nextRoute : any,  visualizationId : number | null | undefined){
+  console.log({ nextRoute })
   const question_id = nextRoute?.question_id
   const question_group_id = nextRoute?.question_group_id
   if(question_id){
@@ -20,9 +21,10 @@ export default async function handleNext(nextRoute : any,  visualizationId : num
         question: true
       }
     })
+    console.log({ questionGroup })
     if(questionGroup) {
       const startQuestion = find(questionGroup.question, (question) => question.is_first_question)
-      redirect(`${questionGroup.topic}/${startQuestion?.id}?visualizationId=${visualizationId}`)
+      redirect(`${startQuestion?.id}?visualizationId=${visualizationId}`)
     }
   } else {
     redirect('/feedback')

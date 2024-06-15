@@ -13,7 +13,7 @@ export async function createVisualization(name: string, file : string, userId : 
       }
     })
     if(visualization){
-      redirect(`questionnaire/graphBasicInfos?visualizationId=${visualization.id}`)
+      redirect(`questionnaire/2?visualizationId=${visualization.id}`)
     }
   }catch(e){
     throw e

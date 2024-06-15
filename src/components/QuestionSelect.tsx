@@ -1,11 +1,11 @@
 'use client'
 import { Button, Form, FormProps, Input, Radio, Space } from 'antd';
-import { feedback, question } from "@prisma/client";
+import { feedback, navigation_rule, question } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
-import { getnavigationRule, saveUserAnswer } from './actions';
+import { getQuestionNavigationRule, getnavigationRule, saveUserAnswer } from './actions';
 import { find, sortBy } from 'lodash'
 import handleNext from '@/nagevationsRules/handleNext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FeedbackModal from './FeedbackModal';
 import { useRouter } from 'next/navigation';
 
@@ -33,7 +33,18 @@ type QuestionProps = {
 
 export default  function QuestionSelect({ isLoadingQuestion, question, options, visualizationId } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
+  const [questionNavigationRule, setQuestionNavigationRule] = useState<navigation_rule | null>(null)
   const router = useRouter()
+
+  useEffect(() => {
+    async function fetchData() {
+      if(question?.id){
+        const navigationRule = await getQuestionNavigationRule(question.id)
+        setQuestionNavigationRule(navigationRule)
+      } 
+    }
+    fetchData()
+  },[question])
   
   if(isLoadingQuestion){
     return <div>Carregando...</div>
@@ -82,7 +93,6 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
 
   const handlenavigationRule = async (optionId : number | undefined) => {
     const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
-    console.log({ navigationRule })
     if(!navigationRule) {
       router.push('/feedback')
       return
@@ -103,6 +113,8 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
     return item.text.toLowerCase(); 
   })
 
+  console.log({ questionNavigationRule })
+  
   return (
     <>
       <Form

@@ -22,3 +22,12 @@ export async function getnavigationRule(questionId : number, optionId : number) 
   })
   return navigationRule
 }
+
+export async function getQuestionNavigationRule(questionId : number) {
+  return await prisma.navigation_rule.findFirst({
+    where: {
+      question_id: questionId,
+      option_id: null
+    }
+  })
+}
