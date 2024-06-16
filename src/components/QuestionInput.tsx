@@ -1,4 +1,5 @@
 'use client'
+import { ChangeEvent, useState } from 'react';
 import { Button, Form, FormProps, Input, Radio } from 'antd';
 import { feedback, question } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
@@ -6,7 +7,6 @@ import { getnavigationRule, saveUserAnswer } from './actions';
 import { NextRouter } from 'next/router';
 import handleNext from '@/nagevationsRules/handleNext';
 import FeedbackModal from './FeedbackModal';
-import { useState } from 'react';
 
 const { TextArea } = Input
 
@@ -25,6 +25,8 @@ type QuestionProps = {
 
 export default  function QuestionInput({ isLoadingQuestion, question, optionType, visualizationId, optionId, questionFeedback } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
+  const [inputValue, setInputValue] = useState<string>('')
+
   if(isLoadingQuestion){
     return <div>Carregando...</div>
   }
@@ -37,35 +39,42 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
   
   const { text } = question
 
-  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+  const handleInputChange = (e: any) => {
+    setInputValue(e.target.value);
+  }
+
+  const handleSave = async () => {
     try{
       const userId = localStorage.getItem('userId')
-      console.log({ values})
-      const userAnswer = values.question ? await saveUserAnswer(question.id, optionId, Number(userId), values.question) :  null
+      const userAnswer = inputValue ? await saveUserAnswer(question.id, optionId, Number(userId), inputValue) :  null
+      console.log({ userAnswer })
       if(userAnswer){
-        if(questionFeedback) {
+        console.log('1', questionFeedback)
+        if(questionFeedback.length) {
           const textFeedBack = questionFeedback.map((feedback) => feedback?.text).join("")
           setShowFeedback(textFeedBack)
         } else {
-          handleNavigationRule(optionId, values?.question)
-        }
         
+          handleNavigationRule()
+        }
+      } else {
+        console.log("Error")
       }
-      console.log('Success:', values);
+      console.log('Success:', inputValue);
     }catch(e){
       console.log("Error on onFinish", e)
     }
   };
   
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
 
-  const handleNavigationRule = async (optionId : number | undefined, value : string | undefined) => {
+
+  const handleNavigationRule = async () => {
+    console.log('entrou')
     const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
     const rule = JSON.parse(navigationRule?.rule || '')
+    console.log(rule)
     if(rule?.action){
-      callAction(rule?.action, [value, visualizationId])
+      callAction(rule?.action, [inputValue, visualizationId])
     } if (rule?.handleNext) {
       handleNext(rule?.handleNext, visualizationId)
     }
@@ -76,35 +85,36 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
   }
 
   const handleOk = () => {
-    handleNavigationRule(undefined, "")
+    handleNavigationRule()
     setShowFeedback("")
   }
 
   return (
-    <>
-      <Form
-        layout='vertical'
-        style={{ maxWidth: 600 }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-      >
-        <Form.Item label={text} name='question'>
-          {
-            optionType === 'bigText' ? 
-              <TextArea rows={5} /> : 
-              <Input  />
-          }
-          
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">Salvar</Button>
-        </Form.Item>
-      </Form>
+    <div className='max-w-2xl'>
+      <div>{text}</div>
+      {
+        optionType === 'bigText' ? 
+          <TextArea
+            value={inputValue}
+            onChange={handleInputChange}
+            style={{ marginTop: 4 }} 
+            rows={5} 
+          /> : 
+          <Input 
+            value={inputValue}
+            onChange={handleInputChange}
+            style={{ marginTop: 4 }} 
+          />
+      }
+      
+      <div>
+        <Button className='mt-4' type="primary" onClick={handleSave}>Salvar</Button>
+      </div>
       <FeedbackModal 
         text={showFeedback}
         handleOk={handleOk}
         handleCancel={handleCancel}
       />
-    </>
+    </div>
   )
 }

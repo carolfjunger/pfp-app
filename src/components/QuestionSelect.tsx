@@ -1,5 +1,5 @@
 'use client'
-import { Button, Form, FormProps, Input, Radio, Space } from 'antd';
+import { Button, Form, FormProps, Input, Radio, RadioChangeEvent, Space } from 'antd';
 import { feedback, navigation_rule, question } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
 import { getQuestionNavigationRule, getnavigationRule, saveUserAnswer } from './actions';
@@ -34,6 +34,7 @@ type QuestionProps = {
 export default  function QuestionSelect({ isLoadingQuestion, question, options, visualizationId } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
   const [questionNavigationRule, setQuestionNavigationRule] = useState<navigation_rule | null>(null)
+  const [value, setValue] = useState(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -57,11 +58,11 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
   
   const { text } = question
 
-  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+  const handleSave = async () => {
     try{
-      
+      console.log({ value })
       const userId = localStorage.getItem('userId')
-      const { optionId } = values
+      const optionId = value
       const userAnswer = optionId ? await saveUserAnswer(question.id, optionId, Number(userId), "") :  null
       if(userAnswer){
         const selectedOption = find(options, (option) => option.id === optionId )
@@ -69,29 +70,27 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
         if(feedback?.length && feedback[0]?.after_question){
           setShowFeedback(feedback[0].text)
         } else {
-          handlenavigationRule(optionId)
+          handlenavigationRule()
         }
       }
-      console.log('Success:', values);
+      console.log('Success:', optionId);
     }catch(e){
       console.log("Error on onFinish", e)
     }
   };
   
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
 
   const handleCancel = () => {
     setShowFeedback("")
   }
 
   const handleOk = () => {
-    handlenavigationRule(undefined)
+    handlenavigationRule()
     setShowFeedback("")
   }
 
-  const handlenavigationRule = async (optionId : number | undefined) => {
+  const handlenavigationRule = async () => {
+    const optionId = value
     const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
     if(!navigationRule) {
       router.push('/feedback')
@@ -113,36 +112,30 @@ export default  function QuestionSelect({ isLoadingQuestion, question, options, 
     return item.text.toLowerCase(); 
   })
 
-  console.log({ questionNavigationRule })
+  const onChange = (e: RadioChangeEvent) => {
+    setValue(e.target.value);
+  }
   
   return (
-    <>
-      <Form
-        layout='vertical'
-        style={{ maxWidth: 600 }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-      >
-        <Form.Item label={text} name="optionId">
-          <Radio.Group>
-            <Space direction="vertical">
-              {
-                orderedOptions.map((option) => (
-                  <Radio key={option.id} value={option.id}>{option.text}</Radio>
-                ))
-              }
-            </Space>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">Salvar</Button>
-        </Form.Item>
-      </Form>
+    <div>
+      <div>{text}</div>
+      <Radio.Group className='mt-4' onChange={onChange} value={value}>
+        <Space direction="vertical">
+          {
+            orderedOptions.map((option) => (
+              <Radio key={option.id} value={option.id}>{option.text}</Radio>
+            ))
+          }
+        </Space>
+      </Radio.Group>
+      <div>
+        <Button className='mt-4' type="primary" onClick={handleSave}>Salvar</Button>
+      </div>
       <FeedbackModal 
         text={showFeedback}
         handleOk={handleOk}
         handleCancel={handleCancel}
       />
-    </>
+    </div>
   )
 }
