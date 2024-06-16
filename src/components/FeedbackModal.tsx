@@ -4,7 +4,8 @@ import { Button, Modal } from 'antd';
 type FeedbackModalProps = {
   text: string,
   handleOk: () => void,
-  handleCancel: () => void
+  handleCancel: () => void,
+  
 }
 
 export default function FeedbackModal ({ text, handleOk, handleCancel } : FeedbackModalProps){
