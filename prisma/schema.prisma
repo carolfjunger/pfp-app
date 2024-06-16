@@ -17,7 +17,7 @@ model data_variable {
 
 model feedback {
   id             Int          @id @default(autoincrement())
-  text           String       @db.VarChar(100)
+  text           String       
   option_id      Int?
   question_id    Int?
   after_question Boolean?     @default(false)
@@ -132,8 +132,8 @@ model references {
   id       Int        @id @default(autoincrement())
   author   String
   title    String
-  DOI      String
-  url      String
+  DOI      String?
+  url      String?
   citation String
   feedback feedback[]
 }

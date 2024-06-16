@@ -3,14 +3,26 @@
 import prisma from "@/lib/prisma";
 
 export async function saveUserAnswer(questionId : number, optionId : number, userId: number, value : string ){
-  return await prisma.user_answer.create({
-    data: {
-      question_id: questionId,
-      option_id: optionId,
-      user_id: userId,
-      value
-    }
+  console.log('chamou')
+  console.log({
+    question_id: questionId,
+    option_id: optionId,
+    user_id: userId,
+    value
   })
+  try {
+    return await prisma.user_answer.create({
+      data: {
+        question_id: questionId,
+        option_id: optionId,
+        user_id: userId,
+        value
+      }
+    })
+  } catch(e){
+    console.log({ e })
+    throw e
+  }
 }
 
 export async function getnavigationRule(questionId : number, optionId : number) {

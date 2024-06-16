@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "references" ALTER COLUMN "DOI" DROP NOT NULL,
+ALTER COLUMN "url" DROP NOT NULL;

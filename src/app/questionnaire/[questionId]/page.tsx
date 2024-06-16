@@ -45,6 +45,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
       question={question}
       visualizationId={Number(visualizationId)}
       optionId={option?.length ? option[0].id : -1}
+      questionFeedback={question?.feedback}
     />
   )
 }

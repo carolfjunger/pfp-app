@@ -9,6 +9,7 @@ export async function getQuestionToStartTitleQuestionnaire(questionId : number){
         id: questionId
       },
       include: {
+        feedback: true,
         option: {
           include: {
             feedback: true
