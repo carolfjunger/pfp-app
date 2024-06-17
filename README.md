@@ -14,6 +14,7 @@
 1. Create a .env file on the root folder and set DATABASE_URL as follows `postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA`
 
 **.env**
+
 ```DATABASE_URL=your url" ```
 
 2. Run the following command to create and seed the database
