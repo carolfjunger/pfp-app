@@ -8,16 +8,17 @@ datasource db {
 }
 
 model data_variable {
-  id         Int                 @id @default(autoincrement())
-  name       String?             @db.VarChar(100)
+  id         Int                           @id @default(autoincrement())
+  name       String?                       @db.VarChar(100)
   data_type  data_variable_type?
-  mapping_id Int?                @unique
+  mapping_id Int?                          @unique
   mapping    mapping?
+  ordered    ordered_data_variable_option?
 }
 
 model feedback {
   id             Int          @id @default(autoincrement())
-  text           String       
+  text           String
   option_id      Int?
   question_id    Int?
   after_question Boolean?     @default(false)
@@ -31,14 +32,13 @@ model graph_types {
   name                    String                       @db.VarChar(100)
   graph_data_types_option graph_data_types_options?
   number_of_variables     number_of_variables_options?
-  ordered                 String?                      @db.VarChar(30)
+  ordered                 Boolean?
   question_group          question_group[]
   visualization           visualization[]
 }
 
 model mapping {
   id                 Int                      @id @default(autoincrement())
-  ordered            String?                  @db.VarChar(30)
   variables_type     variables_type_options?
   visualization_id   Int?
   aggregator         aggregator_type_options?
@@ -61,7 +61,7 @@ model navigation_rule {
 model option {
   id              Int               @id @default(autoincrement())
   text            String            @db.VarChar(100)
-  type            String            @db.VarChar(30)
+  type            option_type?
   question_id     Int?
   feedback        feedback[]
   navigation_rule navigation_rule[]
@@ -111,7 +111,6 @@ model visual_variable {
   id         Int                   @id @default(autoincrement())
   name       String                @db.VarChar(100)
   type       visual_variable_type?
-  position   String?               @db.VarChar(100)
   mapping_id Int?
   mapping    mapping?
 }
@@ -171,4 +170,16 @@ enum variables_type_options {
 
 enum visual_variable_type {
   title
+}
+
+enum ordered_data_variable_option {
+  descending
+  ascending
+}
+
+enum option_type {
+  bigText
+  text
+  singleSelect
+  number
 }
