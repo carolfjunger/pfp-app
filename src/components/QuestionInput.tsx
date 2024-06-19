@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, InputNumber, InputNumberProps  } from 'antd';
 import { question, references } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
 import { getnavigationRule, saveUserAnswer } from './actions';
@@ -52,6 +52,12 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
   const handleInputChange = (e: any) => {
     setInputValue(e.target.value);
   }
+
+  const handleInputNumberChange: InputNumberProps['onChange'] = (value) => {
+    setInputValue(value ? value.toString() : '');
+
+  };
+
 
   const formatFeedback = () => {
     return reduce(questionFeedback, (result : string, value : FeedbackWithReferences) => {
@@ -106,24 +112,28 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
     setShowFeedback("")
   }
 
+  const inputProps = {
+    value: inputValue,
+    onChange: handleInputChange,
+    style: { marginTop: 4 }
+  }
+
   return (
     <div className='max-w-2xl'>
       <div>{text}</div>
       {
         optionType === 'bigText' ? 
           <TextArea
-            value={inputValue}
-            onChange={handleInputChange}
-            style={{ marginTop: 4 }} 
+            {...inputProps} 
             rows={5} 
-          /> : 
-          <Input 
-            value={inputValue}
-            onChange={handleInputChange}
-            style={{ marginTop: 4 }} 
-          />
+          /> : null
       }
-      
+      {
+         optionType === 'text' ? <Input {...inputProps} /> : null
+      }
+      {
+         optionType === 'number' ? <InputNumber {...inputProps} onChange={handleInputNumberChange} /> : null
+      }
       <div>
         <Button className='mt-4' type="primary" onClick={handleSave}>Salvar</Button>
       </div>
