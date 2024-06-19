@@ -1,6 +1,8 @@
 'use server'
 
 import prisma from "@/lib/prisma";
+import { navigation_rule } from "@prisma/client";
+import { every, find } from "lodash";
 
 export async function saveUserAnswer(questionId : number, optionId : number, userId: number, value : string ){
   console.log('chamou')
@@ -26,12 +28,20 @@ export async function saveUserAnswer(questionId : number, optionId : number, use
 }
 
 export async function getnavigationRule(questionId : number, optionId : number) {
-  const navigationRule = await prisma.navigation_rule.findFirst({
+  const navigationRules = await prisma.navigation_rule.findMany({
     where: {
       question_id: questionId,
-      option_id: optionId
+      // option_id: optionId
     }
   })
+  if(!navigationRules.length){
+    return null
+  }
+  const isForAllOptions = every(navigationRules, (value : navigation_rule) => !value.option_id)
+  if(isForAllOptions){
+    return navigationRules[0]
+  }
+  const navigationRule = find(navigationRules, (value : navigation_rule) => value.option_id === optionId)
   return navigationRule
 }
 
