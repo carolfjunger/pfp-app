@@ -21,3 +21,13 @@ export async function getGraphTypeByName(name :string) {
   })
 
 }
+
+
+export async function getUserAnswer(userId : number, questionId : number) {
+  return await prisma.user_answer.findFirst({
+    where: {
+      user_id: userId,
+      question_id: questionId,
+    }
+  })
+}

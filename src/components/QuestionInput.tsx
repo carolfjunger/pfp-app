@@ -25,7 +25,6 @@ type FeedbackWithReferences = {
 }
 
 type QuestionProps = {
-  isLoadingQuestion: boolean,
   question: question,
   optionType: string,
   visualizationId?: number | null,
@@ -33,19 +32,10 @@ type QuestionProps = {
   questionFeedback: FeedbackWithReferences[]
 }
 
-export default  function QuestionInput({ isLoadingQuestion, question, optionType, visualizationId, optionId, questionFeedback } : QuestionProps){
+export default  function QuestionInput({ question, optionType, visualizationId, optionId, questionFeedback } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
   const [inputValue, setInputValue] = useState<string>('')
 
-  if(isLoadingQuestion){
-    return <div>Carregando...</div>
-  }
-
-  if(!question) {
-    return <div>Error: Não existe esse id não existe!</div>
-  }
-
-  
   
   const { text } = question
 
@@ -54,7 +44,7 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
   }
 
   const handleInputNumberChange: InputNumberProps['onChange'] = (value) => {
-    setInputValue(value ? value.toString() : '');
+    setInputValue(typeof value === 'number' ? value.toString() : "");
 
   };
 
@@ -71,6 +61,7 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
   const handleSave = async () => {
     try{
       const userId = localStorage.getItem('userId')
+      console.log({ inputValue })
       const userAnswer = inputValue ? await saveUserAnswer(question.id, optionId, Number(userId), inputValue) :  null
       if(userAnswer){
         if(questionFeedback.length) {
@@ -81,7 +72,7 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
           handleNavigationRule()
         }
       } else {
-        console.log("Error")
+        console.log("Error", userAnswer)
       }
       console.log('Success:', inputValue);
     }catch(e){
@@ -92,7 +83,6 @@ export default  function QuestionInput({ isLoadingQuestion, question, optionType
 
 
   const handleNavigationRule = async () => {
-    console.log('entrou')
     const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
     const rule = JSON.parse(navigationRule?.rule || '')
     console.log(rule)

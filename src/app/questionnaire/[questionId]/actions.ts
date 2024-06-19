@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
-export async function getQuestionToStartTitleQuestionnaire(questionId : number){
+export async function getQuestionById(questionId : number){
   try{
     return await prisma.question.findUnique({
       where: {

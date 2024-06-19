@@ -27,7 +27,7 @@ export async function saveUserAnswer(questionId : number, optionId : number, use
   }
 }
 
-export async function getnavigationRule(questionId : number, optionId : number) {
+export async function getnavigationRule(questionId : number, optionId : number | null | undefined) {
   const navigationRules = await prisma.navigation_rule.findMany({
     where: {
       question_id: questionId,

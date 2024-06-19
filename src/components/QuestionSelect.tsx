@@ -9,11 +9,6 @@ import { useEffect, useState } from 'react';
 import FeedbackModal from './FeedbackModal';
 import { useRouter } from 'next/navigation';
 
-const { TextArea } = Input
-
-type FieldType = {
-  optionId?: number;
-};
 
 type option = { 
   id: number, 
@@ -25,35 +20,15 @@ type option = {
 
 
 type QuestionProps = {
-  isLoadingQuestion: boolean,
   question: question,
   options: option[],
   visualizationId?: number | null,
 }
 
-export default  function QuestionSelect({ isLoadingQuestion, question, options, visualizationId } : QuestionProps){
+export default  function QuestionSelect({ question, options, visualizationId } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
-  const [questionNavigationRule, setQuestionNavigationRule] = useState<navigation_rule | null>(null)
   const [value, setValue] = useState(null)
   const router = useRouter()
-
-  useEffect(() => {
-    async function fetchData() {
-      if(question?.id){
-        const navigationRule = await getQuestionNavigationRule(question.id)
-        setQuestionNavigationRule(navigationRule)
-      } 
-    }
-    fetchData()
-  },[question])
-  
-  if(isLoadingQuestion){
-    return <div>Carregando...</div>
-  }
-
-  if(!question) {
-    return <div>Error: Não existe esse id não existe!</div>
-  }
 
   
   const { text } = question

@@ -2,12 +2,10 @@
 import prisma from '@/lib/prisma'
 import { find } from 'lodash'
 import { redirect } from 'next/navigation'
-import { NextRouter } from 'next/router'
 
 
 
 export default async function handleNext(nextRoute : any,  visualizationId : number | null | undefined){
-  console.log({ nextRoute })
   const question_id = nextRoute?.question_id
   const question_group_id = nextRoute?.question_group_id
   if(question_id){
