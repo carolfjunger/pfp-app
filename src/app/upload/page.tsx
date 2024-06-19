@@ -34,16 +34,14 @@ const normFile = (e: any) => {
 };
 
 export default function UploadPage(){
-
+  const [value, setValue] = useState("")
   const [file, setFile] = useState<string>('')
   
-  const onFinish: FormProps<any>['onFinish'] = async (values) => {
+  const handleSave = async () => {
     const userId = localStorage.getItem('userId')
     if(userId){
-      const result = await createVisualization(values.name, file, Number(userId) )
-      console.log('Success:', values);
+      const result = await createVisualization(value, file, Number(userId) )
     }
-    
   };
 
   const handleFile = async (file: FileType) => {
@@ -51,26 +49,27 @@ export default function UploadPage(){
     setFile(fileBase64)
   }
 
+  const handleChangeValue = (e: any) => {
+    setValue(e.target.value);
+  }
 
   return (
-    <>
-      <Form
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 14 }}
-        layout="horizontal"
-        style={{ maxWidth: 600 }}
-        onFinish={onFinish}
-      >
-        <Form.Item label="Nome" name='name'>
-          <Input />
-        </Form.Item>
-        <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
-          <Uploader handleFile={handleFile} file={file} />
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">Button</Button>
-        </Form.Item>
-      </Form>
-    </>
+    <div className='max-w-96 ml-2'>
+      <div>Nome da visualização: </div>
+      <Input 
+        value={value}
+        onChange={handleChangeValue}
+      />
+      <div className='mt-4 mb-2'>Arquivo: </div>
+      <Uploader handleFile={handleFile} file={file} />
+      <div>
+        <Button 
+          className='mt-4' 
+          type="primary" 
+          onClick={handleSave}
+          disabled={!value || !file}
+        >Continuar</Button>
+      </div>
+    </ div>
   );
 };
