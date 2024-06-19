@@ -104,7 +104,12 @@ export default  function QuestionSelect({ question, options, visualizationId } :
         </Space>
       </Radio.Group>
       <div>
-        <Button className='mt-4' type="primary" onClick={handleSave}>Salvar</Button>
+        <Button 
+          className='mt-4' 
+          type="primary" 
+          onClick={handleSave}
+          disabled={!value}
+        >Salvar</Button>
       </div>
       <FeedbackModal 
         text={showFeedback}

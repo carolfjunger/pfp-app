@@ -125,7 +125,12 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
          optionType === 'number' ? <InputNumber {...inputProps} onChange={handleInputNumberChange} /> : null
       }
       <div>
-        <Button className='mt-4' type="primary" onClick={handleSave}>Salvar</Button>
+        <Button 
+          className='mt-4' 
+          type="primary" 
+          onClick={handleSave}
+          disabled={!inputValue}
+        >Salvar</Button>
       </div>
       <FeedbackModal 
         text={showFeedback}
