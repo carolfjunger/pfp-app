@@ -27,7 +27,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
   const option = question?.option
   const optionType = question?.option[0]?.type
 
-  if(optionType?.includes('select')) {
+  if(optionType?.toLowerCase().includes('select')) {
     return (
       <QuestionSelect
         isLoadingQuestion={isLoadingQuestion}
