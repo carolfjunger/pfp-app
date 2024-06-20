@@ -10,6 +10,7 @@ import { user_answer } from "@prisma/client";
 import { getnavigationRule } from "@/components/actions";
 import handleNext from "@/nagevationsRules/handleNext";
 import { useRouter } from "next/navigation";
+import callAction from "@/nagevationsRules/actions";
 
 
 export default function TitlePage({ params }: { params: { questionId: string } }){
@@ -41,7 +42,6 @@ export default function TitlePage({ params }: { params: { questionId: string } }
 
 
   const handleNextQuestion = async () => {
-    
     const navegationRule = userAnswer?.question_id ? 
       await getnavigationRule(userAnswer.question_id, userAnswer?.option_id) 
       : null
@@ -53,6 +53,19 @@ export default function TitlePage({ params }: { params: { questionId: string } }
       }
     }
     route.replace('/feedback')
+  }
+
+  const handleNavigationRule = async (optionId: number | null, value: string | null) => {
+    const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
+    if(!navigationRule) {
+      route.replace('/feedback')
+      return
+    } 
+    const rule = JSON.parse(navigationRule?.rule || '')
+    if(rule?.action){
+      await callAction(rule?.action, [value, visualizationId])
+    } 
+    handleNext(rule?.handleNext, Number(visualizationId))
   }
 
   const restart = () => {
@@ -102,6 +115,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
         question={question}
         visualizationId={Number(visualizationId)}
         options={option}
+        handleNavigationRule={handleNavigationRule}
       />
     )
   }
@@ -114,6 +128,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
       optionId={option?.length ? option[0].id : -1}
       questionFeedback={question?.feedback}
       setHasError={setHasError}
+      handleNavigationRule={handleNavigationRule}
     />
   )
 }

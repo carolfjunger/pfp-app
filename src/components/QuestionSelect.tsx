@@ -23,9 +23,11 @@ type QuestionProps = {
   question: question,
   options: option[],
   visualizationId?: number | null,
+  handleNavigationRule: (optionId: number | null, value: string | null) => Promise<void>
+
 }
 
-export default  function QuestionSelect({ question, options, visualizationId } : QuestionProps){
+export default  function QuestionSelect({ question, options, handleNavigationRule } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
   const [value, setValue] = useState(null)
   const router = useRouter()
@@ -45,7 +47,7 @@ export default  function QuestionSelect({ question, options, visualizationId } :
         if(feedback?.length && feedback[0]?.after_question){
           setShowFeedback(feedback[0].text)
         } else {
-          handlenavigationRule()
+          handleNavigationRule(value, value)
         }
       }
       console.log('Success:', optionId);
@@ -60,23 +62,23 @@ export default  function QuestionSelect({ question, options, visualizationId } :
   }
 
   const handleOk = () => {
-    handlenavigationRule()
+    handleNavigationRule(value, value)
     setShowFeedback("")
   }
 
-  const handlenavigationRule = async () => {
-    const optionId = value
-    const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
-    if(!navigationRule) {
-      router.push('/feedback')
-      return
-    } 
-    const rule = JSON.parse(navigationRule?.rule || '')
-    if(rule?.action){
-      callAction(rule?.action, [optionId, visualizationId])
-    } 
-    handleNext(rule?.handleNext, visualizationId)
-  }
+  // const handlenavigationRule = async () => {
+  //   const optionId = value
+  //   const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
+  //   if(!navigationRule) {
+  //     router.push('/feedback')
+  //     return
+  //   } 
+  //   const rule = JSON.parse(navigationRule?.rule || '')
+  //   if(rule?.action){
+  //     callAction(rule?.action, [optionId, visualizationId])
+  //   } 
+  //   handleNext(rule?.handleNext, visualizationId)
+  // }
 
   const orderedOptions = sortBy(options, (item) => {
     if (item.text === "N/A") {

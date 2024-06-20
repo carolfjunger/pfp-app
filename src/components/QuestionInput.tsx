@@ -30,10 +30,11 @@ type QuestionProps = {
   visualizationId?: number | null,
   optionId: number,
   questionFeedback: FeedbackWithReferences[],
-  setHasError: Dispatch<SetStateAction<boolean>>
+  setHasError: Dispatch<SetStateAction<boolean>>,
+  handleNavigationRule: (optionId: number | null, value: string | null) => Promise<void>
 }
 
-export default  function QuestionInput({ question, optionType, visualizationId, optionId, questionFeedback, setHasError } : QuestionProps){
+export default  function QuestionInput({ question, optionType, visualizationId, optionId, questionFeedback, setHasError, handleNavigationRule } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
   const [inputValue, setInputValue] = useState<string>('')
 
@@ -69,7 +70,7 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
           const textFeedBack = formatFeedback()
           setShowFeedback(textFeedBack)
         } else {
-          await handleNavigationRule()
+          await handleNavigationRule(optionId, inputValue)
         }
       } else {
         console.log("Error", userAnswer)
@@ -83,23 +84,23 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
   
 
 
-  const handleNavigationRule = async () => {
-    const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
-    const rule = JSON.parse(navigationRule?.rule || '')
-    console.log(rule)
-    if(rule?.action){
-      await callAction(rule?.action, [inputValue, visualizationId])
-    } if (rule?.handleNext) {
-      handleNext(rule?.handleNext, visualizationId)
-    }
-  }
+  // const handleNavigationRule = async () => {
+  //   const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
+  //   const rule = JSON.parse(navigationRule?.rule || '')
+  //   console.log(rule)
+  //   if(rule?.action){
+  //     await callAction(rule?.action, [inputValue, visualizationId])
+  //   } if (rule?.handleNext) {
+  //     handleNext(rule?.handleNext, visualizationId)
+  //   }
+  // }
 
   const handleCancel = () => {
     setShowFeedback("")
   }
 
   const handleOk = () => {
-    handleNavigationRule()
+    handleNavigationRule(optionId, inputValue)
     setShowFeedback("")
   }
 
