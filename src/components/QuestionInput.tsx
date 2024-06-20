@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Button, Input, InputNumber, InputNumberProps  } from 'antd';
 import { question, references } from "@prisma/client";
 import callAction from '@/nagevationsRules/actions';
@@ -29,10 +29,11 @@ type QuestionProps = {
   optionType: string,
   visualizationId?: number | null,
   optionId: number,
-  questionFeedback: FeedbackWithReferences[]
+  questionFeedback: FeedbackWithReferences[],
+  setHasError: Dispatch<SetStateAction<boolean>>
 }
 
-export default  function QuestionInput({ question, optionType, visualizationId, optionId, questionFeedback } : QuestionProps){
+export default  function QuestionInput({ question, optionType, visualizationId, optionId, questionFeedback, setHasError } : QuestionProps){
   const [showFeedback, setShowFeedback] = useState("")
   const [inputValue, setInputValue] = useState<string>('')
 
@@ -68,14 +69,14 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
           const textFeedBack = formatFeedback()
           setShowFeedback(textFeedBack)
         } else {
-        
-          handleNavigationRule()
+          await handleNavigationRule()
         }
       } else {
         console.log("Error", userAnswer)
       }
       console.log('Success:', inputValue);
     }catch(e){
+      setHasError(true)
       console.log("Error on onFinish", e)
     }
   };
@@ -87,7 +88,7 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
     const rule = JSON.parse(navigationRule?.rule || '')
     console.log(rule)
     if(rule?.action){
-      callAction(rule?.action, [inputValue, visualizationId])
+      await callAction(rule?.action, [inputValue, visualizationId])
     } if (rule?.handleNext) {
       handleNext(rule?.handleNext, visualizationId)
     }
@@ -107,6 +108,7 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
     onChange: handleInputChange,
     style: { marginTop: 4 }
   }
+
 
   return (
     <div className='max-w-2xl'>

@@ -175,6 +175,7 @@ enum visual_variable_type {
 enum ordered_data_variable_option {
   descending
   ascending
+  notOrdered
 }
 
 enum option_type {

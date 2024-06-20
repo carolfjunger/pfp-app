@@ -1,20 +1,21 @@
 'use server'
 import prisma from "@/lib/prisma"
 import { getGraphTypeByName, getOptionById } from "@/requests/get"
-import { aggregator_type_options, data_variable, data_variable_type, variables_type_options, visual_variable_type } from "@prisma/client"
+import { aggregator_type_options, data_variable, data_variable_type, ordered_data_variable_option, variables_type_options, visual_variable_type } from "@prisma/client"
 
 export default async function callAction(name : string, params : Array<any>){
   const values = params.map(str => `\`${str}\``).join(',')
-  eval(`${name}(${values})`)
+  return await eval(`${name}(${values})`)
 }
 
 
-async function createDataVariable(name : string, genre : string) : Promise<data_variable> {
+async function createDataVariable(name : string, genre : string, ordered : string) : Promise<data_variable> {
   try{
     return await prisma.data_variable.create({
       data: {
         name,
         data_type: getDataType(genre),
+        ordered: getOrdered(ordered)
       },
       
     })
@@ -39,12 +40,11 @@ function getAggregator(aggregator : string) : aggregator_type_options | null {
   
 }
 
-async function mappingVariable(dataVariableId :  number, ordered : string, visualizationId : number, type : string, aggregator : string) {
+async function mappingVariable(dataVariableId :  number, visualizationId : number, type : string, aggregator : string) {
   try{
     const mapping = await prisma.mapping.create({
       data: {
         data_variable_id: dataVariableId,
-        ordered: getOrdered(ordered), 
         visualization_id: visualizationId,
         variables_type: getVariableType(type),
         aggregator: getAggregator(aggregator)
@@ -60,6 +60,7 @@ async function mappingVariable(dataVariableId :  number, ordered : string, visua
     return mapping
   }catch(e){
     console.log("Error on mappingVariable", e)
+    throw e
   }
 }
 
@@ -70,10 +71,10 @@ function getDataType (genre : string) : data_variable_type | null {
   return null
 }
 
-function getOrdered(ordered : string) {
+function getOrdered(ordered : string) : ordered_data_variable_option | null {
   if(ordered === 'Crescente') return 'ascending'
   if(ordered === 'Decrescente') return 'descending'
-  if(ordered === 'Não') return 'not ordered'
+  if(ordered === 'Não') return 'notOrdered'
   return null
 }
 
@@ -134,17 +135,6 @@ async function getMappingTitleByVisualizationId(visualizationId : number) {
   
 }
 
-async function updateVisualVariablePosition(visualVariableId : number, position : string) {
-  return await prisma.visual_variable.update({
-    where: {
-      id: visualVariableId
-    },
-    data: {
-      position,
-    }
-  }) 
-  
-}
 
 async function updateMappingVariableType(mappingId :number, variableType : string) {
   return await prisma.mapping.update({
@@ -158,31 +148,33 @@ async function updateMappingVariableType(mappingId :number, variableType : strin
 }
 
 
+
 async function saveGraphData(value : string, visualizationId : number) {
-  const variables = value.split('\n')
-  variables.forEach(async variable => {
-    const dataValues = variable.split(',')
-    const genre = dataValues[0].trim()
-    const name = dataValues[1].trim()
-    const ordered = dataValues[2].trim()
-    const type = dataValues[3].trim()
-    const aggregator = dataValues[4].trim()
-    const dataVariable = await createDataVariable(name, genre)
-    const mapVariable = await mappingVariable(dataVariable.id, ordered, Number(visualizationId), type, aggregator)
-  });
+  try{
+    const variables = value.split('\n')
+    await Promise.all(variables.map(async variable => {
+      try {
+        const dataValues = variable.split(',')
+        const genre = dataValues[0].trim()
+        const name = dataValues[1].trim()
+        const ordered = dataValues[2].trim()
+        const type = dataValues[3].trim()
+        const aggregator = dataValues[4].trim()
+        const dataVariable = await createDataVariable(name, genre, ordered)
+        const mapVariable = await mappingVariable(dataVariable.id, Number(visualizationId), type, aggregator)
+      } catch(e){
+        throw e
+      }
+    }))
+  }catch(e){
+    console.log({ e })
+    throw e
+  }
 }
 
 async function saveTitle(title : string, visualizationId : number) {
   const trimedTitle = title.trim()
   await createVisualVaribale(trimedTitle, 'title', Number(visualizationId))
-}
-
-async function saveTitlePosition(optionId : string, visualizationId : string) {
-  const mapping = await getMappingTitleByVisualizationId(Number(visualizationId))
-  const position = await getTextByOptionId(Number(optionId))
-  if(mapping?.visual_variable?.id && position){
-    await updateVisualVariablePosition(mapping?.visual_variable?.id, position)
-  }
 }
 
 async function saveTitleVariableType(optionId : string, visualizationId : string) {

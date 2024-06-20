@@ -16,6 +16,8 @@ export default function TitlePage({ params }: { params: { questionId: string } }
   const [question, setQuestion] = useState<any>(null)
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(true)
   const [userAnswer, setUserAnswer] = useState<user_answer | null>(null)
+  const [hasError, setHasError] = useState(false)
+
   const searchParams = useSearchParams()
   const visualizationId = searchParams.get('visualizationId')
   const route = useRouter()
@@ -53,6 +55,10 @@ export default function TitlePage({ params }: { params: { questionId: string } }
     route.replace('/feedback')
   }
 
+  const restart = () => {
+    route.replace('/')
+  }
+
   const option = question?.option
   const optionType = question?.option[0]?.type
 
@@ -66,13 +72,27 @@ export default function TitlePage({ params }: { params: { questionId: string } }
 
   if(!!userAnswer){
     return <div>
-      <div>
+      <div className="mb-2">
         Voce ja respondeu essa pergunta
       </div>
       <Button
         type="primary"
         onClick={handleNextQuestion}
       >Seguir para a próxima</Button>
+      <Button
+        className="ml-4"
+        onClick={restart}
+      >
+        Recomeçar questionário
+      </Button>
+    </div>
+  }
+
+  
+  if(hasError){
+    return <div>
+      <div>Ocorreu um erro inesperado</div>
+      <Button onClick={restart}>Recomeçar</Button>
     </div>
   }
 
@@ -93,6 +113,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
       visualizationId={Number(visualizationId)}
       optionId={option?.length ? option[0].id : -1}
       questionFeedback={question?.feedback}
+      setHasError={setHasError}
     />
   )
 }
