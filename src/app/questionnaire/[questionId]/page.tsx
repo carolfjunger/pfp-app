@@ -52,13 +52,13 @@ export default function TitlePage({ params }: { params: { questionId: string } }
         return
       }
     }
-    route.replace('/feedback')
+    route.replace(`/feedback?visualizationId=${visualizationId}`)
   }
 
   const handleNavigationRule = async (optionId: number | null, value: string | null) => {
     const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
     if(!navigationRule) {
-      route.replace('/feedback')
+      route.replace(`/feedback?visualizationId=${visualizationId}`)
       return
     } 
     const rule = JSON.parse(navigationRule?.rule || '')

@@ -31,3 +31,30 @@ export async function getUserAnswer(userId : number, questionId : number) {
     }
   })
 }
+
+export async function getManyUserAnswer(userId : number) {
+  return await prisma.user_answer.findMany({
+    where: {
+      user_id: userId
+    },
+    include: {
+      option: {
+        include: {
+          feedback: {
+            include: {
+              references: true
+            }
+          }
+        }
+      }
+    }
+  })
+  
+}
+
+export async function getManyUsersFeedbacks(userId : number)  {
+  const userAnswers = await getManyUserAnswer(userId)
+  const feedbackByOption = userAnswers.map((userAnswer) => userAnswer.option.feedback)
+  return feedbackByOption.filter(array => array.length > 0);
+  
+}

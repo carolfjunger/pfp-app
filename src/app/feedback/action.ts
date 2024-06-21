@@ -18,7 +18,6 @@ export async function getVisualization(visualizationId : number) {
   const variables : any[] = visualization?.mapping ? visualization?.mapping.map((mappedValue) => ({
     name: mappedValue?.data_variable?.name, 
     dataType:  mappedValue?.data_variable?.data_type, 
-    ordered: mappedValue.ordered,
     variableType: mappedValue.variables_type,
     aggregator: mappedValue.aggregator,
     key: mappedValue.id
@@ -41,7 +40,6 @@ export async function getGraphVariables(visualizationId : number){
   return mappings.map((mapping) => ({
     name: mapping?.data_variable?.name, 
     dataType:  mapping?.data_variable?.data_type, 
-    ordered: mapping.ordered,
     variableType: mapping.variables_type,
     aggregator: mapping.aggregator
   }))

@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { getVisualization } from "./action"
-import { Table } from 'antd';
+import { List, Table } from 'antd';
 import type { TableProps } from 'antd';
 import { translateAggregator, translateDataType, translateOrdered, translateVariableType } from "./utils";
 import Image from "next/image";
+import { references } from "@prisma/client";
+import { useSearchParams } from "next/navigation";
+import { getManyUsersFeedbacks } from "@/requests/get";
 
 interface  VariablesType {
   name: string,
@@ -19,6 +22,9 @@ interface  VariablesType {
 export default function FeedbackPage(){
   const [isLoading, setIsLoading] = useState(true)
   const [visualization, setVisualization] = useState<any>(null)
+  const [feedbacks, setFeedbacks] = useState<any[]>([])
+  const searchParams = useSearchParams()
+  const visualizationId = searchParams.get('visualizationId')
 
 
   const columns: TableProps<VariablesType>['columns'] = [
@@ -55,12 +61,19 @@ export default function FeedbackPage(){
 
   useEffect(() => {
     async function fetchData() {
-      const visualization = await getVisualization(7)
+      const userId = localStorage.getItem("userId")
+      const visualization = await getVisualization(Number(visualizationId))
       setVisualization(visualization)
+      const feedbacks = await getManyUsersFeedbacks(Number(userId))
+      setFeedbacks(feedbacks)
       setIsLoading(false)
     }
     fetchData()
   }, [])
+
+  const mapReferences = (references : references[]) => {
+    return references.map((reference : references) => reference.citation).join(',')
+  }
 
   if(isLoading){
     return <div>Carregando...</div>
@@ -68,17 +81,29 @@ export default function FeedbackPage(){
 
   const { variables, file } = visualization
 
-  return <div>
+  return <div className="max-w-5xl p-4">
     <h1>Feedback</h1>
     <Image 
+      className="mt-3"
       alt="viz"
       src={file}
-      width={200}
-      height={200}
+      width={300}
+      height={300}
     />
-    <div>{`Sua visualização tem ${variables.length} ${variables.length > 1 ? "variáveis" : "variável"} mapeada${variables.length > 1 ? "s" : ""}`}</div>
-    <div>
+    <div className="mt-3">{`Sua visualização tem ${variables.length} ${variables.length > 1 ? "variáveis" : "variável"} mapeada${variables.length > 1 ? "s" : ""}`}</div>
+    <div className="mt-3">
       <Table columns={columns} dataSource={variables} />
     </div>
+    <h3 className="mt-3">De acordo com as suas respostas foram mapeados os seguintes feedbacks:</h3>
+    <List
+      className="mt-3"
+      bordered
+      dataSource={feedbacks}
+      renderItem={(item) => (
+        <List.Item>
+          <div>{`${item[0]?.text} ${mapReferences(item[0]?.references)}`}</div>
+        </List.Item>
+      )}
+    />
   </div>
 }
