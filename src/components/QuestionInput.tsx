@@ -15,27 +15,19 @@ type FieldType = {
   question?: string;
 };
 
-type FeedbackWithReferences = {
-  id: number,
-  text: string,
-  option_id: number | null,
-  question_id: number | null,
-  after_question: boolean | null,
-  references: references[]
-}
 
 type QuestionProps = {
   question: question,
   optionType: string,
-  visualizationId?: number | null,
+  showFeedback: string,
+  setShowFeedback: Dispatch<SetStateAction<string>>,
   optionId: number,
-  questionFeedback: FeedbackWithReferences[],
-  setHasError: Dispatch<SetStateAction<boolean>>,
+  handleSave: (optionId : number, value : any) => void,
   handleNavigationRule: (optionId: number | null, value: string | null) => Promise<void>
 }
 
-export default  function QuestionInput({ question, optionType, visualizationId, optionId, questionFeedback, setHasError, handleNavigationRule } : QuestionProps){
-  const [showFeedback, setShowFeedback] = useState("")
+export default  function QuestionInput({ question, optionType, showFeedback, setShowFeedback, optionId, handleSave, handleNavigationRule } : QuestionProps){
+  // const [showFeedback, setShowFeedback] = useState("")
   const [inputValue, setInputValue] = useState<string>('')
 
   
@@ -51,49 +43,6 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
   };
 
 
-  const formatFeedback = () => {
-    return reduce(questionFeedback, (result : string, value : FeedbackWithReferences) => {
-      const feedbackText = value.text
-      const references = value?.references.map((reference : references) => reference?.citation).join("")
-      result += feedbackText + " " + references
-      return result
-    }, "")
-  }
-
-  const handleSave = async () => {
-    try{
-      const userId = localStorage.getItem('userId')
-      console.log({ inputValue })
-      const userAnswer = inputValue ? await saveUserAnswer(question.id, optionId, Number(userId), inputValue) :  null
-      if(userAnswer){
-        if(questionFeedback.length) {
-          const textFeedBack = formatFeedback()
-          setShowFeedback(textFeedBack)
-        } else {
-          await handleNavigationRule(optionId, inputValue)
-        }
-      } else {
-        console.log("Error", userAnswer)
-      }
-      console.log('Success:', inputValue);
-    }catch(e){
-      setHasError(true)
-      console.log("Error on onFinish", e)
-    }
-  };
-  
-
-
-  // const handleNavigationRule = async () => {
-  //   const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
-  //   const rule = JSON.parse(navigationRule?.rule || '')
-  //   console.log(rule)
-  //   if(rule?.action){
-  //     await callAction(rule?.action, [inputValue, visualizationId])
-  //   } if (rule?.handleNext) {
-  //     handleNext(rule?.handleNext, visualizationId)
-  //   }
-  // }
 
   const handleCancel = () => {
     setShowFeedback("")
@@ -103,6 +52,7 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
     handleNavigationRule(optionId, inputValue)
     setShowFeedback("")
   }
+
 
   const inputProps = {
     value: inputValue,
@@ -131,7 +81,7 @@ export default  function QuestionInput({ question, optionType, visualizationId, 
         <Button 
           className='mt-4' 
           type="primary" 
-          onClick={handleSave}
+          onClick={() => handleSave(optionId, inputValue)}
           disabled={!inputValue}
         >Salvar</Button>
       </div>

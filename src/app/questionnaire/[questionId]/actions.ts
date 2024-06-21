@@ -16,7 +16,11 @@ export async function getQuestionById(questionId : number){
         },
         option: {
           include: {
-            feedback: true
+            feedback: {
+              include: {
+                references: true
+              }
+            }
           }
         }
       }

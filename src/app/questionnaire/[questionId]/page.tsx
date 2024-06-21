@@ -6,11 +6,21 @@ import { getQuestionById } from "./actions";
 import QuestionSelect from "@/components/QuestionSelect";
 import { getUserAnswer } from "@/requests/get";
 import { Button } from "antd";
-import { user_answer } from "@prisma/client";
-import { getnavigationRule } from "@/components/actions";
+import { references, user_answer } from "@prisma/client";
+import { getnavigationRule, saveUserAnswer } from "@/components/actions";
 import handleNext from "@/nagevationsRules/handleNext";
 import { useRouter } from "next/navigation";
 import callAction from "@/nagevationsRules/actions";
+import { find, reduce } from "lodash";
+
+type FeedbackWithReferences = {
+  id: number,
+  text: string,
+  option_id: number | null,
+  question_id: number | null,
+  after_question: boolean | null,
+  references: references[]
+}
 
 
 export default function TitlePage({ params }: { params: { questionId: string } }){
@@ -18,6 +28,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(true)
   const [userAnswer, setUserAnswer] = useState<user_answer | null>(null)
   const [hasError, setHasError] = useState(false)
+  const [showFeedback, setShowFeedback] = useState("")
 
   const searchParams = useSearchParams()
   const visualizationId = searchParams.get('visualizationId')
@@ -68,6 +79,51 @@ export default function TitlePage({ params }: { params: { questionId: string } }
     handleNext(rule?.handleNext, Number(visualizationId))
   }
 
+  
+  const formatFeedback = (feedback : any) => {
+    return reduce(feedback, (result : string, value : FeedbackWithReferences) => {
+      console.log({ value })
+      const feedbackText = value.text
+      const references = value?.references.map((reference : references) => reference?.citation).join("")
+      result += feedbackText + " " + references
+      return result
+    }, "")
+  }
+
+  const getFeedback = (optionId : number | null) => {
+    const options = question?.option
+    console.log({ options })
+    const selectedOption = find(options, (option) => option.id === optionId )
+    console.log({ selectedOption})
+    const feedback = selectedOption?.feedback
+    console.log({ feedback })
+    if(feedback) return feedback
+    const questionFeedback = question?.feedback
+    return questionFeedback
+  }
+
+  const handleSave = async (optionId : number | null, value : any) => {
+    try{
+      const feedback = getFeedback(optionId)
+      const userId = localStorage.getItem('userId')
+      const userAnswer = optionId ? await saveUserAnswer(question.id, optionId, Number(userId), value) :  null
+      if(userAnswer){
+        if(feedback.length) {
+          const textFeedBack = formatFeedback(feedback)
+          setShowFeedback(textFeedBack)
+        } else {
+          await handleNavigationRule(optionId, value)
+        }
+      } else {
+        console.log("Error", userAnswer)
+      }
+      console.log('Success:', value);
+    }catch(e){
+      setHasError(true)
+      console.log("Error on onFinish", e)
+    }
+  };
+
   const restart = () => {
     route.replace('/')
   }
@@ -109,6 +165,7 @@ export default function TitlePage({ params }: { params: { questionId: string } }
     </div>
   }
 
+
   if(optionType?.toLowerCase().includes('select')) {
     return (
       <QuestionSelect
@@ -116,6 +173,9 @@ export default function TitlePage({ params }: { params: { questionId: string } }
         visualizationId={Number(visualizationId)}
         options={option}
         handleNavigationRule={handleNavigationRule}
+        handleSave={handleSave}
+        showFeedback={showFeedback}
+        setShowFeedback={setShowFeedback}
       />
     )
   }
@@ -124,11 +184,11 @@ export default function TitlePage({ params }: { params: { questionId: string } }
     <QuestionInput
       optionType={optionType}
       question={question}
-      visualizationId={Number(visualizationId)}
+      handleSave={handleSave}
       optionId={option?.length ? option[0].id : -1}
-      questionFeedback={question?.feedback}
-      setHasError={setHasError}
       handleNavigationRule={handleNavigationRule}
+      showFeedback={showFeedback}
+      setShowFeedback={setShowFeedback}
     />
   )
 }

@@ -5,7 +5,7 @@ import callAction from '@/nagevationsRules/actions';
 import { getQuestionNavigationRule, getnavigationRule, saveUserAnswer } from './actions';
 import { find, sortBy } from 'lodash'
 import handleNext from '@/nagevationsRules/handleNext';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import FeedbackModal from './FeedbackModal';
 import { useRouter } from 'next/navigation';
 
@@ -24,37 +24,19 @@ type QuestionProps = {
   options: option[],
   visualizationId?: number | null,
   handleNavigationRule: (optionId: number | null, value: string | null) => Promise<void>
-
+  handleSave: (optionId : number | null, value : any) => void,
+  showFeedback: string,
+  setShowFeedback: Dispatch<SetStateAction<string>>,
 }
 
-export default  function QuestionSelect({ question, options, handleNavigationRule } : QuestionProps){
-  const [showFeedback, setShowFeedback] = useState("")
+export default  function QuestionSelect({ question, options, handleNavigationRule, handleSave, showFeedback, setShowFeedback } : QuestionProps){
+  // const [showFeedback, setShowFeedback] = useState("")
   const [value, setValue] = useState(null)
-  const router = useRouter()
+  // const router = useRouter()
 
   
   const { text } = question
 
-  const handleSave = async () => {
-    try{
-      console.log({ value })
-      const userId = localStorage.getItem('userId')
-      const optionId = value
-      const userAnswer = optionId ? await saveUserAnswer(question.id, optionId, Number(userId), "") :  null
-      if(userAnswer){
-        const selectedOption = find(options, (option) => option.id === optionId )
-        const feedback = selectedOption?.feedback
-        if(feedback?.length && feedback[0]?.after_question){
-          setShowFeedback(feedback[0].text)
-        } else {
-          handleNavigationRule(value, value)
-        }
-      }
-      console.log('Success:', optionId);
-    }catch(e){
-      console.log("Error on onFinish", e)
-    }
-  };
   
 
   const handleCancel = () => {
@@ -66,19 +48,6 @@ export default  function QuestionSelect({ question, options, handleNavigationRul
     setShowFeedback("")
   }
 
-  // const handlenavigationRule = async () => {
-  //   const optionId = value
-  //   const navigationRule = optionId ? await getnavigationRule(question.id, optionId) : null
-  //   if(!navigationRule) {
-  //     router.push('/feedback')
-  //     return
-  //   } 
-  //   const rule = JSON.parse(navigationRule?.rule || '')
-  //   if(rule?.action){
-  //     callAction(rule?.action, [optionId, visualizationId])
-  //   } 
-  //   handleNext(rule?.handleNext, visualizationId)
-  // }
 
   const orderedOptions = sortBy(options, (item) => {
     if (item.text === "N/A") {
@@ -109,7 +78,7 @@ export default  function QuestionSelect({ question, options, handleNavigationRul
         <Button 
           className='mt-4' 
           type="primary" 
-          onClick={handleSave}
+          onClick={() => handleSave(value, value)}
           disabled={!value}
         >Salvar</Button>
       </div>

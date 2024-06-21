@@ -5,20 +5,13 @@ import { navigation_rule } from "@prisma/client";
 import { every, find } from "lodash";
 
 export async function saveUserAnswer(questionId : number, optionId : number, userId: number, value : string ){
-  console.log('chamou')
-  console.log({
-    question_id: questionId,
-    option_id: optionId,
-    user_id: userId,
-    value
-  })
   try {
     return await prisma.user_answer.create({
       data: {
         question_id: questionId,
         option_id: optionId,
         user_id: userId,
-        value
+        value: typeof value === 'string' ? value : ''
       }
     })
   } catch(e){
