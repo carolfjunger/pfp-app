@@ -1,13 +1,9 @@
 'use client'
-import { Button, Form, FormProps, Input, Radio, RadioChangeEvent, Space } from 'antd';
-import { feedback, navigation_rule, question } from "@prisma/client";
-import callAction from '@/nagevationsRules/actions';
-import { getQuestionNavigationRule, getnavigationRule, saveUserAnswer } from './actions';
-import { find, sortBy } from 'lodash'
-import handleNext from '@/nagevationsRules/handleNext';
+import { Button, Radio, RadioChangeEvent, Space } from 'antd';
+import { feedback, question } from "@prisma/client";
+import { sortBy } from 'lodash'
 import { Dispatch, SetStateAction, useState } from 'react';
 import FeedbackModal from './FeedbackModal';
-import { useRouter } from 'next/navigation';
 
 
 type option = { 

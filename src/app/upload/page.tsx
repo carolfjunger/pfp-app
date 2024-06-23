@@ -1,15 +1,12 @@
 'use client'
 import React, { useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
 import {
   Button,
-  Form,
-  FormProps,
   Input,
 } from 'antd';
 import Uploader from '@/components/uploader';
 import type { GetProp, UploadProps } from 'antd';
-import { createVisualization } from './actions';
+import { createVisualization } from '@/requests/create';
 
 
 
@@ -40,7 +37,7 @@ export default function UploadPage(){
   const handleSave = async () => {
     const userId = localStorage.getItem('userId')
     if(userId){
-      const result = await createVisualization(value, file, Number(userId) )
+      await createVisualization(value, file, Number(userId) )
     }
   };
 

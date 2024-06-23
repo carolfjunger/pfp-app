@@ -1,7 +1,6 @@
 'use client'
-import type { FormProps } from 'antd';
-import { Button, Form, Input } from 'antd';
-import { saveNewUser } from './actions';
+import { saveNewUser } from '@/requests/create';
+import { Button, Input } from 'antd';
 import { useState } from 'react';
 
 

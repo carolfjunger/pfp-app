@@ -1,14 +1,13 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { getVisualization } from "./action"
 import { List, Table } from 'antd';
 import type { TableProps } from 'antd';
 import { translateAggregator, translateDataType, translateOrdered, translateVariableType } from "./utils";
 import Image from "next/image";
 import { references } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
-import { getManyUsersFeedbacks } from "@/requests/get";
+import { getManyUsersFeedbacks, getVisualization } from "@/requests/find";
 
 interface  VariablesType {
   name: string,

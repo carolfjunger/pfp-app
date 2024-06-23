@@ -1,16 +1,15 @@
 'use client'
 import { useEffect, useState } from "react";
 import {  useSearchParams } from "next/navigation";
-import QuestionInput from "@/components/QuestionInput";
-import { getQuestionById } from "./actions";
-import QuestionSelect from "@/components/QuestionSelect";
-import { getUserAnswer } from "@/requests/get";
-import { Button } from "antd";
-import { references, user_answer } from "@prisma/client";
-import { getnavigationRule, saveUserAnswer } from "@/components/actions";
-import handleNext from "@/nagevationsRules/handleNext";
 import { useRouter } from "next/navigation";
+import QuestionInput from "@/components/QuestionInput";
+import QuestionSelect from "@/components/QuestionSelect";
+import { getQuestionById, getUserAnswer, getnavigationRule } from "@/requests/find";
+import { saveUserAnswer } from "@/requests/create";
+import { references, user_answer } from "@prisma/client";
+import handleNext from "@/nagevationsRules/handleNext";
 import callAction from "@/nagevationsRules/actions";
+import { Button } from "antd";
 import { find, reduce } from "lodash";
 
 type FeedbackWithReferences = {

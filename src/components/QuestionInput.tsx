@@ -1,19 +1,10 @@
 'use client'
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Button, Input, InputNumber, InputNumberProps  } from 'antd';
-import { question, references } from "@prisma/client";
-import callAction from '@/nagevationsRules/actions';
-import { getnavigationRule, saveUserAnswer } from './actions';
-import { NextRouter } from 'next/router';
-import handleNext from '@/nagevationsRules/handleNext';
+import { question } from "@prisma/client";
 import FeedbackModal from './FeedbackModal';
-import { reduce } from 'lodash';
 
 const { TextArea } = Input
-
-type FieldType = {
-  question?: string;
-};
 
 
 type QuestionProps = {
