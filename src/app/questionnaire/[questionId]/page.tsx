@@ -92,11 +92,8 @@ export default function TitlePage({ params }: { params: { questionId: string } }
 
   const getFeedback = (optionId : number | null) => {
     const options = question?.option
-    console.log({ options })
     const selectedOption = find(options, (option) => option.id === optionId )
-    console.log({ selectedOption})
     const feedback = selectedOption?.feedback
-    console.log({ feedback })
     if(feedback) return feedback
     const questionFeedback = question?.feedback
     return questionFeedback
