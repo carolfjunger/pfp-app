@@ -2,9 +2,16 @@
 import prisma from "@/lib/prisma";
 import { aggregator_type_options, data_variable, data_variable_type, ordered_data_variable_option, variables_type_options, visual_variable_type } from "@prisma/client"
 import { redirect } from "next/navigation";
-import { getVariableType } from "./utils";
+import { getAggregator, getDataType, getOrdered, getVariableType } from "./utils";
 
 
+/**
+ * Function that saves a new user
+ *
+ * @async
+ * @param {string} userName
+ * @returns {user} Created User
+ */
 export const saveNewUser = async (userName : string) => {
   try{
     return  await prisma.users.create({
@@ -18,6 +25,16 @@ export const saveNewUser = async (userName : string) => {
 
 }
 
+/**
+ * Function that creates a new visualization
+ *
+ * @export
+ * @async
+ * @param {string} name Visualization name
+ * @param {string} file Visualization file in base64
+ * @param {(number | null)} userId User id
+ * @returns {*}
+ */
 export async function createVisualization(name: string, file : string, userId : number | null) {
   try{
     const visualization = await prisma.visualization.create({
@@ -35,6 +52,17 @@ export async function createVisualization(name: string, file : string, userId : 
   }
 }
 
+/**
+ * Function that creates the user anwser 
+ *
+ * @export
+ * @async
+ * @param {number} questionId
+ * @param {number} optionId
+ * @param {number} userId
+ * @param {string} value
+ * @returns {unknown}
+ */
 export async function saveUserAnswer(questionId : number, optionId : number, userId: number, value : string ){
   try {
     return await prisma.user_answer.create({
@@ -52,21 +80,16 @@ export async function saveUserAnswer(questionId : number, optionId : number, use
 }
 
 
-function getDataType (genre : string) : data_variable_type | null {
-  if(genre === 'Categórica') return 'categoric'
-  if(genre === 'Numérico') return 'numeric'
-  if(genre === 'Temporal') return 'timeseries'
-  return null
-}
-
-function getOrdered(ordered : string) : ordered_data_variable_option | null {
-  if(ordered === 'Crescente') return 'ascending'
-  if(ordered === 'Decrescente') return 'descending'
-  if(ordered === 'Não') return 'notOrdered'
-  return null
-}
-
-
+/**
+ *  Function that creates data variable
+ *
+ * @export
+ * @async
+ * @param {string} name
+ * @param {string} genre
+ * @param {string} ordered
+ * @returns {Promise<data_variable>}
+ */
 export async function createDataVariable(name : string, genre : string, ordered : string) : Promise<data_variable> {
   try{
     return await prisma.data_variable.create({
@@ -82,16 +105,17 @@ export async function createDataVariable(name : string, genre : string, ordered 
   }
 }
 
-
-
-function getAggregator(aggregator : string) : aggregator_type_options | null {
-  if(aggregator === "Contador") return 'count'
-  if(aggregator === "Proporção") return 'percentage'
-  if(aggregator === "Frequência") return 'frequency'
-  return null
-  
-}
-
+/**
+ * Functions that creates mapping and link with visualization 
+ *
+ * @export
+ * @async
+ * @param {number} dataVariableId
+ * @param {number} visualizationId
+ * @param {string} type
+ * @param {string} aggregator
+ * @returns {unknown}
+ */
 export async function mappingVariable(dataVariableId :  number, visualizationId : number, type : string, aggregator : string) {
   try{
     const mapping = await prisma.mapping.create({
@@ -116,6 +140,16 @@ export async function mappingVariable(dataVariableId :  number, visualizationId 
   }
 }
 
+/**
+ * Function that creates a visual variable and mapping
+ *
+ * @export
+ * @async
+ * @param {string} name
+ * @param {visual_variable_type} type
+ * @param {number} visualization_id
+ * @returns {unknown}
+ */
 export async function createVisualVaribale(name : string, type : visual_variable_type, visualization_id : number) {
 
   const visualVariable = await prisma.visual_variable.create({
