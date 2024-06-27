@@ -10,8 +10,19 @@ import { createVisualization } from '@/requests/create';
 
 
 
+/**
+ *  FileType definition 
+ *
+ * @typedef {FileType}
+ */
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
+/**
+ * Function that gets the image formatted in base64 from a file
+ *
+ * @param {*} file
+ * @returns {Promise<string>}
+ */
 const getBase64 = (file: any): Promise<string> =>{
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -22,14 +33,12 @@ const getBase64 = (file: any): Promise<string> =>{
 }
     
 
-
-const normFile = (e: any) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
-
+/**
+ * Page that renders the UploadPage
+ *
+ * @export
+ * @returns {*}
+ */
 export default function UploadPage(){
   const [value, setValue] = useState("")
   const [file, setFile] = useState<string>('')

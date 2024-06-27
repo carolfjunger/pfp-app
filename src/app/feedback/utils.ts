@@ -1,3 +1,10 @@
+/**
+ *  Function that receives a data type and translates it into user-friendly writing
+ *
+ * @export
+ * @param {string} dataType
+ * @returns {("N/A" | "Categórico" | "Numérico" | "Temporal")}
+ */
 export function translateDataType(dataType : string){
   if(dataType === "categoric") return "Categórico"
   if(dataType === "numeric") return "Numérico"
@@ -5,6 +12,12 @@ export function translateDataType(dataType : string){
   return "N/A"
 }
 
+/**
+ * Function that receives a type and translates it into user-friendly writing
+ * @export
+ * @param {string} type
+ * @returns {("N/A" | "Nominal" | "Nordinal")}
+ */
 export function translateVariableType(type : string) {
   if(type === 'nominal') return 'Nominal'
   if(type === 'ordinal') return 'Nordinal'
@@ -12,6 +25,13 @@ export function translateVariableType(type : string) {
 }
 
 
+/**
+ * Function that receives an aggregator and translates it into user-friendly writing
+ *
+ * @export
+ * @param {string} aggregator
+ * @returns {("N/A" | "Contador" | "Proporção" | "Frequência")}
+ */
 export function translateAggregator(aggregator : string) {
   if(aggregator === "count") return 'Contador'
   if(aggregator === "percentage") return 'Proporção'
@@ -20,6 +40,13 @@ export function translateAggregator(aggregator : string) {
   
 }
 
+/**
+ * Function that receives an ordered and translates it into user-friendly writing
+ *
+ * @export
+ * @param {string} ordered
+ * @returns {("Crescente" | "Decrescente" | "Não" | "N/A")}
+ */
 export function translateOrdered(ordered : string) {
   if(ordered === 'ascending') return 'Crescente'
   if(ordered === 'descending') return 'Decrescente'

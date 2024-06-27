@@ -9,7 +9,12 @@ import { references } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { getManyUsersFeedbacks, getVisualization } from "@/requests/find";
 
-interface  VariablesType {
+/**
+ * Variable Type formatted
+ *
+ * @typedef {VariablesType}
+ */
+type  VariablesType = {
   name: string,
   dataType: string,
   variableType: string,
@@ -18,6 +23,12 @@ interface  VariablesType {
 }
 
 
+/**
+ * Page that renders FeedbackPage
+ *
+ * @export
+ * @returns {*}
+ */
 export default function FeedbackPage(){
   const [isLoading, setIsLoading] = useState(true)
   const [visualization, setVisualization] = useState<any>(null)

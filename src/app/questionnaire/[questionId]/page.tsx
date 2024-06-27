@@ -12,6 +12,11 @@ import callAction from "@/nagevationsRules/actions";
 import { Button } from "antd";
 import { find, reduce } from "lodash";
 
+/**
+ * Feedback type linked with references
+ *
+ * @typedef {FeedbackWithReferences}
+ */
 type FeedbackWithReferences = {
   id: number,
   text: string,
@@ -22,7 +27,15 @@ type FeedbackWithReferences = {
 }
 
 
-export default function TitlePage({ params }: { params: { questionId: string } }){
+/**
+ * Page that renders the QuestionnairePage
+ *
+ * @export
+ * @param {{ params: { questionId: string } }} param0
+ * @param {{ questionId: string; \}\} param0.params
+ * @returns {*\}
+ */
+export default function QuestionnairePage({ params }: { params: { questionId: string } }){
   const [question, setQuestion] = useState<any>(null)
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(true)
   const [userAnswer, setUserAnswer] = useState<user_answer | null>(null)

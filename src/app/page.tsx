@@ -4,10 +4,12 @@ import { Button, Input } from 'antd';
 import { useState } from 'react';
 
 
-type FieldType = {
-  username?: string;
-};
-
+/**
+ * Page that renders the Home page
+ *
+ * @export
+ * @returns {*}
+ */
 export default function Home() {
   const [value, setValue] = useState("")
 
