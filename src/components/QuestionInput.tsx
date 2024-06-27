@@ -7,6 +7,11 @@ import FeedbackModal from './FeedbackModal';
 const { TextArea } = Input
 
 
+/**
+ * type with props of QuestionInput Component
+ *
+ * @typedef {QuestionProps}
+ */
 type QuestionProps = {
   question: question,
   optionType: string,
@@ -17,8 +22,21 @@ type QuestionProps = {
   handleNavigationRule: (optionId: number | null, value: string | null) => Promise<void>
 }
 
+/**
+ * Component that renders QuestionInput
+ *
+ * @export
+ * @param {QuestionProps} param0
+ * @param {question} param0.question Question
+ * @param {string} param0.optionType Type of the option
+ * @param {string} param0.showFeedback Text with feedback message
+ * @param {Dispatch<SetStateAction<string>>} param0.setShowFeedback Set state of showFeedback
+ * @param {number} param0.optionId Id of the option
+ * @param {(optionId: number, value: any) => void} param0.handleSave Function that save user anwser
+ * @param {(optionId: number, value: string) => Promise<void>} param0.handleNavigationRule Function that handle navegation rules
+ * @returns {*}
+ */
 export default  function QuestionInput({ question, optionType, showFeedback, setShowFeedback, optionId, handleSave, handleNavigationRule } : QuestionProps){
-  // const [showFeedback, setShowFeedback] = useState("")
   const [inputValue, setInputValue] = useState<string>('')
 
   

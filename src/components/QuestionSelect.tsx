@@ -6,6 +6,11 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import FeedbackModal from './FeedbackModal';
 
 
+/**
+ * Option type with feedback
+ *
+ * @typedef {option}
+ */
 type option = { 
   id: number, 
   text: string, 
@@ -15,6 +20,11 @@ type option = {
 }
 
 
+/**
+ *  type with props of QuestionSelect Component
+ *
+ * @typedef {QuestionProps}
+ */
 type QuestionProps = {
   question: question,
   options: option[],
@@ -25,6 +35,19 @@ type QuestionProps = {
   setShowFeedback: Dispatch<SetStateAction<string>>,
 }
 
+/**
+ * Component that renders QuestionSelect
+ *
+ * @export
+ * @param {QuestionProps} param0
+ * @param {question} param0.question Question
+ * @param {{}} param0.options  Lis of options
+ * @param {(optionId: number, value: string) => Promise<void>} param0.handleNavigationRule Function that handle navegation rules
+ * @param {(optionId: number, value: any) => void} param0.handleSave Function that save user anwser
+ * @param {string} param0.showFeedback Text with feedback message
+ * @param {Dispatch<SetStateAction<string>>} param0.setShowFeedback Set state of showFeedback
+ * @returns {*\}
+ */
 export default  function QuestionSelect({ question, options, handleNavigationRule, handleSave, showFeedback, setShowFeedback } : QuestionProps){
   // const [showFeedback, setShowFeedback] = useState("")
   const [value, setValue] = useState(null)

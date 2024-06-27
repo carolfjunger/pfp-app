@@ -1,5 +1,10 @@
 import { Modal } from 'antd';
 
+/**
+ * type with props of FeedbackModal Component
+ *
+ * @typedef {FeedbackModalProps}
+ */
 type FeedbackModalProps = {
   text: string,
   handleOk: () => void,
@@ -7,6 +12,16 @@ type FeedbackModalProps = {
   
 }
 
+/**
+ * Component that renders Feedback Modal
+ *
+ * @export
+ * @param {FeedbackModalProps} param0
+ * @param {string} param0.text
+ * @param {() => void} param0.handleOk
+ * @param {() => void} param0.handleCancel
+ * @returns {Component} Modal
+ */
 export default function FeedbackModal ({ text, handleOk, handleCancel } : FeedbackModalProps){
 
 

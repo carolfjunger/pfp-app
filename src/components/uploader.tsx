@@ -5,6 +5,11 @@ import Image from 'next/image';
 
 
 
+/**
+ * Props from upload component
+ *
+ * @type {UploadProps}
+ */
 const props: UploadProps = {
   name: 'file',
   multiple: false,
@@ -24,6 +29,15 @@ const props: UploadProps = {
   },
 };
 
+/**
+ * Component that renders Uploader
+ *
+ * @export
+ * @param {*} param0
+ * @param {*} param0.file File
+ * @param {*} param0.handleFile function that handle the manipulation of file
+ * @returns {*}
+ */
 export default function Uploader({ file, handleFile } : any)  {
 
   const handleChangeFile = (info : any) => {
