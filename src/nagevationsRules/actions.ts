@@ -11,7 +11,7 @@ import { updateMappingVariableType } from "@/requests/update"
  * @async
  * @param {string} name Function name to call
  * @param {Array<any>} params Functions Params
- * @returns {unknown}
+ * @returns {unknown} Function called return
  */
 export default async function callAction(name : string, params : Array<any>){
   const values = params.map(str => `\`${str}\``).join(',')
@@ -20,10 +20,10 @@ export default async function callAction(name : string, params : Array<any>){
 
 
 /**
- * ${1:Description placeholder}
+ * Action that saves graph variables by user anwnser 
  *
  * @async
- * @param {string} value
+ * @param {string} value User answered string with variables
  * @param {number} visualizationId
  * @returns {*}
  */
@@ -52,7 +52,7 @@ async function saveGraphData(value : string, visualizationId : number) {
 }
 
 /**
- * ${1:Description placeholder}
+ * Action that saves title
  *
  * @async
  * @param {string} title
@@ -61,12 +61,11 @@ async function saveGraphData(value : string, visualizationId : number) {
  */
 async function saveTitle(title : string, visualizationId : number) {
   const trimedTitle = title.trim()
-  console.log({ trimedTitle })
   await createVisualVaribale(trimedTitle, 'title', Number(visualizationId))
 }
 
 /**
- * ${1:Description placeholder}
+ * Action that saves title type 
  *
  * @async
  * @param {string} optionId
@@ -82,8 +81,8 @@ async function saveTitleVariableType(optionId : string, visualizationId : string
 }
 
 /**
- * ${1:Description placeholder}
- *
+ * Action that saves graph type
+ * 
  * @async
  * @param {string} optionId
  * @param {string} visualizationId
