@@ -4,12 +4,29 @@ import { createDataVariable, createVisualVaribale, mappingVariable } from "@/req
 import { getGraphTypeByName, getMappingTitleByVisualizationId, getOptionById, getTextByOptionId } from "@/requests/find"
 import { updateMappingVariableType } from "@/requests/update"
 
+/**
+ * Function that calls actions from this file
+ *
+ * @export
+ * @async
+ * @param {string} name Function name to call
+ * @param {Array<any>} params Functions Params
+ * @returns {unknown}
+ */
 export default async function callAction(name : string, params : Array<any>){
   const values = params.map(str => `\`${str}\``).join(',')
   return await eval(`${name}(${values})`)
 }
 
 
+/**
+ * ${1:Description placeholder}
+ *
+ * @async
+ * @param {string} value
+ * @param {number} visualizationId
+ * @returns {*}
+ */
 async function saveGraphData(value : string, visualizationId : number) {
   try{
     const variables = value.split('\n')
@@ -34,12 +51,28 @@ async function saveGraphData(value : string, visualizationId : number) {
   }
 }
 
+/**
+ * ${1:Description placeholder}
+ *
+ * @async
+ * @param {string} title
+ * @param {number} visualizationId
+ * @returns {*}
+ */
 async function saveTitle(title : string, visualizationId : number) {
   const trimedTitle = title.trim()
   console.log({ trimedTitle })
   await createVisualVaribale(trimedTitle, 'title', Number(visualizationId))
 }
 
+/**
+ * ${1:Description placeholder}
+ *
+ * @async
+ * @param {string} optionId
+ * @param {string} visualizationId
+ * @returns {*}
+ */
 async function saveTitleVariableType(optionId : string, visualizationId : string) {
   const mapping = await getMappingTitleByVisualizationId(Number(visualizationId))
   const variableType = await getTextByOptionId(Number(optionId))
@@ -48,6 +81,14 @@ async function saveTitleVariableType(optionId : string, visualizationId : string
   }
 }
 
+/**
+ * ${1:Description placeholder}
+ *
+ * @async
+ * @param {string} optionId
+ * @param {string} visualizationId
+ * @returns {*}
+ */
 async function handleSaveGraphType(optionId : string, visualizationId : string) {
   const option = await getOptionById(Number(optionId))
   if(option){

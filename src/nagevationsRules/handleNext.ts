@@ -5,6 +5,15 @@ import { redirect } from 'next/navigation'
 
 
 
+/**
+ * Functions that handle next navegation, redirect the user for next route
+ *
+ * @export
+ * @async
+ * @param {*} nextRoute Object with the next item
+ * @param {(number | null | undefined)} visualizationId
+ * @returns {*}
+ */
 export default async function handleNext(nextRoute : any,  visualizationId : number | null | undefined){
   const question_id = nextRoute?.question_id
   const question_group_id = nextRoute?.question_group_id
